@@ -1,0 +1,40 @@
+body {
+    background-image: url('../cork-wallet.png');
+}
+
+canvas {
+    border: 1px solid #666;
+    background-color: #f3f3f3;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+tr, th, td {
+    border: 1px solid black;
+    padding: 4px;
+}
+
+table {
+    margin-top: 5px;
+    border-collapse: collapse;
+}
+
+div[id$="representation"] {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+div[id$="representation"] table {
+    background-color: #fff;
+}
+
+#search > button {
+    margin-left: 10px;
+}
+
+th,
+#adjacency-matrix-representation > table tr td:first-child {
+    background-color: #ccc;
+}

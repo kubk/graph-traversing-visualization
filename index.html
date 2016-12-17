@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/Position.js"></script>
+    <script src="js/Edge.js"></script>
+    <script src="js/DirectedEdge.js"></script>
+    <script src="js/UndirectedEdge.js"></script>
+    <script src="js/Graph.js"></script>
+    <script src="js/Vertex.js"></script>
+    <script src="js/polyfills.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/CanvasHelper.js"></script>
+    <script src="js/VerticesTraversingAnimation.js"></script>
+    <script src="js/math.js"></script>
+    <script src="js/graph-representations.js"></script>
+    <script src="js/EventManagerMixin.js"></script>
+</head>
+<body>
+
+<div id="search">
+    Search type:
+    <input type="radio" name="search" id="depth-first-search" checked="checked">
+    <label for="depth-first-search">Depth-first</label>
+    <input type="radio" name="search" id="breadth-first-search">
+    <label for="breadth-first-search">Breadth-first</label>
+    <button id="start-search">Run search</button>
+</div>
+<br>
+
+<div id="edge-type">
+    Edge type:
+    <input type="radio" name="edge-type" id="directed-edge" checked="checked">
+    <label for="directed-edge">Directed</label>
+    <input type="radio" name="edge-type" id="undirected-edge">
+    <label for="undirected-edge">Undirected</label>
+</div>
+<br>
+
+<canvas id="canvas" width=800 height=350></canvas>
+<br>
+
+<div id="adjacency-matrix-representation"></div>
+<div id="adjacency-list-representation"></div>
+<div id="incidence-matrix-representation"></div>
+
+<script>
+    "use strict";
+    var dragVertex;
+    var uncompletedEdge;
+
+    function getEventPosition(event, canvas) {
+        var boundingClientRect = canvas.getBoundingClientRect();
+        return new Position(
+                parseInt(event.clientX - boundingClientRect.left),
+                parseInt(event.clientY - boundingClientRect.top)
+        );
+    }
+
+    function ctrlKeyIsPressed(event) {
+        return event.ctrlKey || event.metaKey;
+    }
+
+    window.onload = function () {
+        var canvas = document.getElementById('canvas');
+        var mathHelper = new MathHelper();
+        var canvasHelper = new CanvasHelper(canvas, mathHelper);
+        var graph = new Graph(canvasHelper, mathHelper);
+        var verticesTraversingAnimation = new VerticesTraversingAnimation(canvasHelper);
+
+
+/*        // Default graph
+        var v1 = graph.createVertexInPosition(new Position(100, 100));
+        var v2 = graph.createVertexInPosition(new Position(200, 200));
+        var v3 = graph.createVertexInPosition(new Position(300, 100));
+        graph.addEdge(v1.createDirectedEdgeTo(v2));
+        graph.addEdge(v1.createDirectedEdgeTo(v3));
+        graph.addEdge(v2.createDirectedEdgeTo(v1));
+        graph.addEdge(v3.createDirectedEdgeTo(v2));
+        graph.redraw();
+*/
+        canvas.addEventListener('click', function (event) {
+            var clickPosition = getEventPosition(event, canvas);
+            var vertex = graph.getVertex(clickPosition);
+            if (!dragVertex && !vertex) {
+                graph.createVertexInPosition(clickPosition);
+            } else if (vertex && ctrlKeyIsPressed(event)) {
+                graph.setVertexAsSelected(vertex);
+            }
+        });
+        canvas.addEventListener('contextmenu', function (event) {
+            event.preventDefault();
+            var clickPosition = getEventPosition(event, canvas);
+            var vertex = graph.getVertex(clickPosition);
+            if (ctrlKeyIsPressed(event) && vertex) {
+                graph.deleteVertex(vertex);
+            } else if (vertex) {
+                if (uncompletedEdge) {
+                    var vertexFrom = graph.getVertex(uncompletedEdge);
+                    if (document.getElementById('directed-edge').checked) {
+                        graph.addEdge(vertexFrom.createDirectedEdgeTo(vertex));
+                    } else {
+                        graph.addEdge(vertexFrom.createUndirectedEdgeTo(vertex));
+                    }
+                    uncompletedEdge = false;
+                    graph.redraw();
+                } else if (vertex) {
+                    uncompletedEdge = vertex.getPosition();
+                }
+            } else if (uncompletedEdge && !vertex) {
+                uncompletedEdge = false;
+                graph.redraw();
+            }
+        });
+        canvas.addEventListener('mousemove', function (event) {
+            var mousePosition = getEventPosition(event, canvas);
+            if (uncompletedEdge) {
+                graph.redraw();
+                var isEdgeDirected = document.getElementById('directed-edge').checked;
+                canvasHelper.drawLine(isEdgeDirected, uncompletedEdge, mousePosition);
+            } else if (dragVertex) {
+                dragVertex.setPosition(mousePosition);
+                graph.redraw();
+            }
+        });
+        canvas.addEventListener('mouseup', function () {
+            if (dragVertex) {
+                dragVertex = false;
+                graph.redraw();
+            }
+        });
+        canvas.addEventListener('mousedown', function (event) {
+            var vertex = graph.getVertex(getEventPosition(event, canvas));
+            if (!vertex) {
+                return false;
+            }
+            dragVertex = vertex;
+        });
+        document.getElementById('start-search').addEventListener('click', function () {
+            var startFromVertex = graph.getSelectedVertex();
+            var visitedVertices = [];
+            if (!startFromVertex) {
+                return alert('Select start vertex using Ctrl + left mouse click');
+            }
+            if (document.getElementById('depth-first-search').checked) {
+                depthFirstSearch(startFromVertex, visitedVertices);
+            } else {
+                visitedVertices = breadthFirstSearch(startFromVertex);
+            }
+            verticesTraversingAnimation.animate(visitedVertices);
+            graph.discardSelectedVertex();
+        });
+
+        graph.on(Graph.EVENT_VERTEX_CREATED,
+                rebuildAdjacencyListAction,
+                rebuildAdjacencyMatrixAction
+        );
+        graph.on(Graph.EVENT_EDGE_ADDED,
+                rebuildIncidenceMatrixAction,
+                rebuildAdjacencyListAction,
+                rebuildAdjacencyMatrixAction
+        );
+        graph.on(Graph.EVENT_VERTEX_DELETED,
+                rebuildAdjacencyListAction,
+                rebuildAdjacencyMatrixAction,
+                rebuildIncidenceMatrixAction
+        );
+
+        function rebuildIncidenceMatrixAction() {
+            var incidenceMatrix = edgesListToIncidenceMatrix(this.getEdgesList(), this.getVerticesList());
+            document.getElementById('incidence-matrix-representation')
+                    .innerHTML = incidenceMatrixToHtmlTable(incidenceMatrix);
+        }
+
+        function rebuildAdjacencyMatrixAction() {
+            var adjacencyMatrix = verticesListToAdjacencyMatrix(graph.getVerticesList());
+            document.getElementById('adjacency-matrix-representation')
+                    .innerHTML = adjacencyMatrixToHtmlTable(adjacencyMatrix, this.getVerticesList());
+        }
+
+        function rebuildAdjacencyListAction() {
+            document.getElementById('adjacency-list-representation')
+                    .innerHTML = buildAdjacencyListHtml(this.getVerticesList());
+        }
+    }
+</script>
