@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/polyfills.js"></script>
+    <script src="../js/model/Position.js"></script>
+    <script src="../js/model/Edge.js"></script>
+    <script src="../js/model/DirectedEdge.js"></script>
+    <script src="../js/model/UndirectedEdge.js"></script>
+    <script src="../js/model/Graph.js"></script>
+    <script src="../js/model/Vertex.js"></script>
+    <script src="../js/model/EventManagerMixin.js"></script>
+    <script src="../js/view/GraphCanvasView.js"></script>
+    <script src="../js/view/GraphHtmlTableView.js"></script>
+    <script src="../js/CanvasHelper.js"></script>
+    <script src="../js/operations/intersection-graph.js"></script>
+    <script src="../js/operations/sum-graph.js"></script>
+</head>
+<body>
+
+<div id="edge-type">
+    Edge type:
+    <input type="radio" name="edge-type" id="directed-edge" checked="checked">
+    <label for="directed-edge">Directed</label>
+    <input type="radio" name="edge-type" id="undirected-edge">
+    <label for="undirected-edge">Undirected</label>
+</div>
+<input id="sum" type="button" value="Sum">
+<input id="intersection" type="button" value="Intersection">
+<br>
+
+<canvas id="left-canvas" width=400 height=350></canvas>
+<canvas id="right-canvas" width=400 height=350></canvas>
+<canvas id="result-canvas" width=805 height=350></canvas>
+<br>
+
+<div id="adjacency-matrix-representation"></div>
+<div id="adjacency-list-representation"></div>
+<div id="degrees-representation"></div>
+<div id="incidence-matrix-representation"></div>
+
+<script>
+    var leftGraph = new Graph();
+    var rightGraph = new Graph();
+
+    window.onload = function () {
+        var leftGraphCanvasView = new GraphCanvasView(leftGraph, document.getElementById('left-canvas'));
+        var rightGraphCanvasView = new GraphCanvasView(rightGraph, document.getElementById('right-canvas'));
+
+        document.getElementById('sum').addEventListener('click', calcOperation.bind(this, getSumForGraphs));
+        document.getElementById('intersection').addEventListener('click', calcOperation.bind(this, getIntersectionForGraphs));
+
+        function calcOperation(operation) {
+            var resultGraph = operation(leftGraph, rightGraph);
+            var graphCanvasView = new GraphCanvasView(resultGraph, document.getElementById('result-canvas'));
+            graphCanvasView.redraw();
+            var graphHtmlTableView = new GraphHtmlTableView(resultGraph);
+            graphHtmlTableView.rebuildAdjacencyListAction();
+            graphHtmlTableView.rebuildAdjacencyMatrixAction();
+            graphHtmlTableView.rebuildIncidenceMatrixAction();
+            graphHtmlTableView.rebuildDegreesTable();
+        }
+    }
+
+</script>

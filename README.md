@@ -2,15 +2,19 @@
 
 Graph representation/manipulation/traversal visualization using vanilla JavaScript + Canvas API.
 
-Check out [demo in your browser](https://kubk.github.io/graph-traversing-visualization/).
-
 ## Features
 - Draggable vertices
 - Directed (one-way)/Undirected (two-way)/Parallel edges
-- Dynamic building of adjacency matrix, incidence matrix, adjacency list
+- Dynamic building of [adjacency matrix](https://en.wikipedia.org/wiki/Adjacency_matrix), [incidence matrix](https://en.wikipedia.org/wiki/Incidence_matrix), [adjacency list](https://en.wikipedia.org/wiki/Adjacency_list)
 - Deleting vertices (with all connected edges)
 - Depth/Breadth-first search visualization
+- Calculation graph operations ([sum](http://mathworld.wolfram.com/GraphSum.html), [intersection](http://mathworld.wolfram.com/GraphIntersection.html))
 - Object-oriented
+
+## Demo
+Check out demo in your browser:
+- [Depth/Breadth-first search visualization](https://kubk.github.io/graph-traversing-visualization/pages/graph-traversing-animation.html)
+- [Calculating graph operations](https://kubk.github.io/graph-traversing-visualization/pages/graph-operations.html)
 
 ## Control
 - Create vertex - Left mouse click on empty space

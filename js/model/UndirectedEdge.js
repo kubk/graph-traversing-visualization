@@ -8,7 +8,7 @@ function UndirectedEdge(vertexA, vertexB) {
 
 UndirectedEdge.prototype = Object.create(Edge.prototype);
 
-UndirectedEdge.prototype.getIncidentVertexTo = function(vertex) {
+UndirectedEdge.prototype.getIncidentVertexTo = function (vertex) {
     if (this._vertexA === vertex) {
         return this._vertexB;
     } else if (this._vertexB === vertex) {

@@ -1,4 +1,4 @@
-function CanvasHelper(canvas, mathHelper) {
+function CanvasHelper(canvas) {
     if (!canvas.getContext) {
         throw new TypeError('Canvas not supported in your browser');
     }
@@ -10,7 +10,6 @@ function CanvasHelper(canvas, mathHelper) {
     // Divide curve/line in ratio (for edge direction)
     this._ratio = 0.5;
     this._arrowLength = 20;
-    this._mathHelper = mathHelper;
 }
 
 CanvasHelper.prototype.clearCanvas = function () {
@@ -40,9 +39,17 @@ CanvasHelper.prototype.drawLine = function (directed, fromPosition, toPosition, 
 
     if (directed === true) {
         this._context.beginPath();
-        var positionDivInRatio = this._mathHelper.getPositionDividedInRatio(this._ratio, fromPosition, toPosition);
+        var positionDivInRatio = this._getPositionDividedInRatio(this._ratio, fromPosition, toPosition);
         this._drawArrow(fromPosition, toPosition, positionDivInRatio);
     }
+};
+
+// Посчитать координаты, деляющие прямой отрезок в отношении ratio
+CanvasHelper.prototype._getPositionDividedInRatio = function (ratio, fromPosition, toPosition) {
+    return new Position(
+        (fromPosition.getX() + (ratio * toPosition.getX())) / (1 + ratio),
+        (fromPosition.getY() + (ratio * toPosition.getY())) / (1 + ratio)
+    );
 };
 
 CanvasHelper.prototype.drawCircle = function (position, radius, textInside, color) {
@@ -65,7 +72,7 @@ CanvasHelper.prototype.drawCircle = function (position, radius, textInside, colo
     this._context.fillStyle = '#fff';
     this._context.textAlign = 'center';
     this._context.fillText(textInside, position.getX(), position.getY() + this._fontSize / 2);
-    this._context.fillStyle = '#000'; // TODO: Fix this ugly workaround 
+    this._context.fillStyle = '#000'; 
 };
 
 CanvasHelper.prototype.drawEdges = function (edges) {
@@ -88,13 +95,23 @@ CanvasHelper.prototype.drawEdges = function (edges) {
         if (edge instanceof DirectedEdge) {
             that._context.beginPath();
             var arrowStartPosition = new Position(
-                that._mathHelper.getQuadraticCurveCoord(that._ratio, fromX, shiftX, toX),
-                that._mathHelper.getQuadraticCurveCoord(that._ratio, fromY, shiftY, toY)
+                that._getQuadraticCurveCoord(that._ratio, fromX, shiftX, toX),
+                that._getQuadraticCurveCoord(that._ratio, fromY, shiftY, toY)
             );
             that._drawArrow(vertices[0].getPosition(), vertices[1].getPosition(), arrowStartPosition);
         }
     });
 };
+
+// t — шаг на котором мы считаем положение кривой, p0, p1, p2 - опорные точки
+// Теория: https://ru.wikipedia.org/wiki/%D0%9A%D1%80%D0%B8%D0%B2%D0%B0%D1%8F_%D0%91%D0%B5%D0%B7%D1%8C%D0%B5#.D0.9A.D0.B2.D0.B0.D0.B4.D1.80.D0.B0.D1.82.D0.B8.D1.87.D0.BD.D1.8B.D0.B5_.D0.BA.D1.80.D0.B8.D0.B2.D1.8B.D0.B5
+CanvasHelper.prototype._getQuadraticCurveCoord = function (t, p0, p1, p2) {
+    if (t < 0 || t > 1) {
+        throw new Error('Parameter t must be in range from 0 to 1');
+    }
+    return Math.pow(1 - t, 2) * p0 + 2 * (1 - t) * t * p1 + Math.pow(t, 2) * p2;
+};
+
 
 // https://ru.wikipedia.org/wiki/%D0%9F%D0%BE%D0%B2%D0%BE%D1%80%D0%BE%D1%82#.D0.9F.D0.BE.D0.B2.D0.BE.D1.80.D0.BE.D1.82_.D0.B2_.D0.B4.D0.B2.D1.83.D0.BC.D0.B5.D1.80.D0.BD.D0.BE.D0.BC_.D0.BF.D1.80.D0.BE.D1.81.D1.82.D1.80.D0.B0.D0.BD.D1.81.D1.82.D0.B2.D0.B5
 CanvasHelper.prototype._drawArrow = function (fromPosition, toPosition, arrowStartPosition) {
@@ -138,3 +155,4 @@ CanvasHelper.prototype._getShiftGenerator = function (edgesCount) {
         return oldShift;
     }
 };
+

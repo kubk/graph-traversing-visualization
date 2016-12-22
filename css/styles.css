@@ -34,6 +34,10 @@ div[id$="representation"] table {
     margin-left: 10px;
 }
 
+input[type="button"] {
+    margin: 5px 0;
+}
+
 th,
 #adjacency-matrix-representation > table tr td:first-child {
     background-color: #ccc;

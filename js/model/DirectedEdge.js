@@ -8,11 +8,11 @@ function DirectedEdge(fromVertex, toVertex) {
 
 DirectedEdge.prototype = Object.create(Edge.prototype);
 
-DirectedEdge.prototype.getFromVertex = function() {
+DirectedEdge.prototype.getFromVertex = function () {
     return this._fromVertex;
 };
 
-DirectedEdge.prototype.getIncidentVertexTo = function(vertex) {
+DirectedEdge.prototype.getIncidentVertexTo = function (vertex) {
     if (this._fromVertex === vertex) {
         return this._toVertex;
     } else if (this._toVertex === vertex) {
