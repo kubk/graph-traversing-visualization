@@ -1,3 +1,14 @@
+"use strict";
+
+module.exports = VerticesTraversingAnimation;
+var GraphCanvasView = require('./view/GraphCanvasView');
+
+/**
+ * @param {GraphCanvasView} graphCanvasView
+ * @param {Element} animationStartButton
+ * @param {Element} dfsRadioButton
+ * @constructor
+ */
 function VerticesTraversingAnimation(graphCanvasView, animationStartButton, dfsRadioButton) {
     if (!(graphCanvasView instanceof GraphCanvasView)) {
         throw new TypeError('Argument must be of type GraphCanvasView');
@@ -27,6 +38,10 @@ VerticesTraversingAnimation.prototype.startAnimation = function () {
     this._graphCanvasView.discardSelectedVertex();
 };
 
+/**
+ * @param {Vertex} vertex
+ * @param {Vertex[]} visited
+ */
 VerticesTraversingAnimation.prototype.depthFirstSearch = function (vertex, visited) {
     if (visited.indexOf(vertex) === -1) {
         visited.push(vertex);
@@ -37,6 +52,10 @@ VerticesTraversingAnimation.prototype.depthFirstSearch = function (vertex, visit
     }
 };
 
+/**
+ * @param {Vertex} vertex
+ * @returns {Vertex[]}
+ */
 VerticesTraversingAnimation.prototype.breadthFirstSearch = function (vertex) {
     var queue = [vertex],
         visitedVertices = [],
@@ -56,6 +75,9 @@ VerticesTraversingAnimation.prototype.breadthFirstSearch = function (vertex) {
     return visitedVertices;
 };
 
+/**
+ * @param {Vertex[]} visitedVertices
+ */
 VerticesTraversingAnimation.prototype._animateVisited = function (visitedVertices) {
     var currentVertex = visitedVertices.shift();
     if (currentVertex) {
@@ -71,4 +93,3 @@ VerticesTraversingAnimation.prototype._animateVisited = function (visitedVertice
         alert('Animation completed');
     }
 };
-

@@ -1,3 +1,17 @@
+"use strict";
+
+module.exports = Graph;
+var EventManagerMixin = require('./EventManagerMixin');
+var Edge = require('./Edge');
+var Vertex = require('./Vertex');
+var Position = require('./Position');
+
+/**
+ * @param {Function} [generateVertexId]
+ * @param {Vertex[]} [verticesList]
+ * @param {Edge[]} [edgesList]
+ * @constructor
+ */
 function Graph(generateVertexId, verticesList, edgesList) {
     EventManagerMixin.call(this);
     this._generateVertexId = generateVertexId || this._getVertexIdGenerator();
@@ -9,10 +23,17 @@ Graph.EVENT_VERTEX_CREATED = 'vertexCreated';
 Graph.EVENT_VERTEX_DELETED = 'vertexDeleted';
 Graph.EVENT_EDGE_ADDED = 'edgeAdded';
 
+/**
+ * @param {Vertex} vertex
+ * @returns {boolean}
+ */
 Graph.prototype.containsVertex = function (vertex) {
     return this._verticesList.indexOf(vertex) !== -1;
 };
 
+/**
+ * @param {Edge} edge
+ */
 Graph.prototype.addEdge = function (edge) {
     if (!(edge instanceof Edge)) {
         throw new TypeError('Argument must be of type Edge');
@@ -31,14 +52,23 @@ Graph.prototype._createVertexWithPosition = function (position) {
     return vertex;
 };
 
+/**
+ * @returns {Vertex[]}
+ */
 Graph.prototype.getVerticesList = function () {
     return this._verticesList;
 };
 
+/**
+ * @returns {Edge[]}
+ */
 Graph.prototype.getEdgesList = function () {
     return this._edgesList;
 };
 
+/**
+ * @param {Vertex} vertex
+ */
 Graph.prototype.deleteVertex = function (vertex) {
     if (!(vertex instanceof Vertex)) {
         throw new TypeError('Argument must be of type Vertex');
@@ -58,6 +88,10 @@ Graph.prototype.deleteVertex = function (vertex) {
     this.trigger(Graph.EVENT_VERTEX_DELETED);
 };
 
+/**
+ * @returns {Function}
+ * @private
+ */
 Graph.prototype._getVertexIdGenerator = function () {
     var current = 65;
     return function () {

@@ -1,2 +1,4 @@
 .idea
 todo
+push-to-github.sh
+node_modules

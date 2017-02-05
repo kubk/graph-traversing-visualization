@@ -1,3 +1,13 @@
+"use strict";
+
+module.exports = CanvasHelper;
+var Position = require('./model/Position');
+var DirectedEdge = require('./model/DirectedEdge');
+
+/**
+ * @param {HTMLCanvasElement} canvas
+ * @constructor
+ */
 function CanvasHelper(canvas) {
     if (!canvas.getContext) {
         throw new TypeError('Canvas not supported in your browser');
@@ -16,10 +26,17 @@ CanvasHelper.prototype.clearCanvas = function () {
     this._context.clearRect(0, 0, this._width, this._height);
 };
 
-CanvasHelper.prototype.drawLine = function (directed, fromPosition, toPosition, lineWidth, strokeStyle) {
+/**
+ * @param {boolean} isDirected
+ * @param {Position} fromPosition
+ * @param {Position} toPosition
+ * @param {number} [lineWidth]
+ * @param {*} [strokeStyle]
+ */
+CanvasHelper.prototype.drawLine = function (isDirected, fromPosition, toPosition, lineWidth, strokeStyle) {
     if (lineWidth) {
         if (!Number.isInteger(lineWidth) || lineWidth < 1) {
-            throw new TypeError('Invalid argument: ' + lineWidth + '. The argument must be a positive integer');
+            throw new TypeError('LineWidth must be a positive integer, given: ' + lineWidth);
         }
         this._context.lineWidth = lineWidth;
     }
@@ -37,14 +54,21 @@ CanvasHelper.prototype.drawLine = function (directed, fromPosition, toPosition, 
     this._context.lineTo(toPosition.getX(), toPosition.getY());
     this._context.stroke();
 
-    if (directed === true) {
+    if (isDirected === true) {
         this._context.beginPath();
         var positionDivInRatio = this._getPositionDividedInRatio(this._ratio, fromPosition, toPosition);
         this._drawArrow(fromPosition, toPosition, positionDivInRatio);
     }
 };
 
-// Посчитать координаты, деляющие прямой отрезок в отношении ratio
+/**
+ * Calculates position of point, that divides the line in a given ratio
+ *
+ * @param {number} ratio
+ * @param {Position} fromPosition
+ * @param {Position} toPosition
+ * @returns {Position}
+ */
 CanvasHelper.prototype._getPositionDividedInRatio = function (ratio, fromPosition, toPosition) {
     return new Position(
         (fromPosition.getX() + (ratio * toPosition.getX())) / (1 + ratio),
@@ -52,6 +76,12 @@ CanvasHelper.prototype._getPositionDividedInRatio = function (ratio, fromPositio
     );
 };
 
+/**
+ * @param {Position} position
+ * @param {number} radius
+ * @param {*} textInside
+ * @param {*} [color]
+ */
 CanvasHelper.prototype.drawCircle = function (position, radius, textInside, color) {
     if (!textInside) {
         throw new Error('Text inside circle is not specified');
@@ -72,9 +102,11 @@ CanvasHelper.prototype.drawCircle = function (position, radius, textInside, colo
     this._context.fillStyle = '#fff';
     this._context.textAlign = 'center';
     this._context.fillText(textInside, position.getX(), position.getY() + this._fontSize / 2);
-    this._context.fillStyle = '#000'; 
 };
 
+/**
+ * @param {Edge[]} edges
+ */
 CanvasHelper.prototype.drawEdges = function (edges) {
     var generateShift = this._getShiftGenerator(edges.length);
     var that = this;
@@ -103,8 +135,14 @@ CanvasHelper.prototype.drawEdges = function (edges) {
     });
 };
 
-// t — шаг на котором мы считаем положение кривой, p0, p1, p2 - опорные точки
-// Теория: https://ru.wikipedia.org/wiki/%D0%9A%D1%80%D0%B8%D0%B2%D0%B0%D1%8F_%D0%91%D0%B5%D0%B7%D1%8C%D0%B5#.D0.9A.D0.B2.D0.B0.D0.B4.D1.80.D0.B0.D1.82.D0.B8.D1.87.D0.BD.D1.8B.D0.B5_.D0.BA.D1.80.D0.B8.D0.B2.D1.8B.D0.B5
+/**
+ * https://ru.wikipedia.org/wiki/%D0%9A%D1%80%D0%B8%D0%B2%D0%B0%D1%8F_%D0%91%D0%B5%D0%B7%D1%8C%D0%B5#.D0.9A.D0.B2.D0.B0.D0.B4.D1.80.D0.B0.D1.82.D0.B8.D1.87.D0.BD.D1.8B.D0.B5_.D0.BA.D1.80.D0.B8.D0.B2.D1.8B.D0.B5
+ * @param {number} t
+ * @param {number} p0
+ * @param {number} p1
+ * @param {number} p2
+ * @returns {number}
+ */
 CanvasHelper.prototype._getQuadraticCurveCoord = function (t, p0, p1, p2) {
     if (t < 0 || t > 1) {
         throw new Error('Parameter t must be in range from 0 to 1');
@@ -113,7 +151,12 @@ CanvasHelper.prototype._getQuadraticCurveCoord = function (t, p0, p1, p2) {
 };
 
 
-// https://ru.wikipedia.org/wiki/%D0%9F%D0%BE%D0%B2%D0%BE%D1%80%D0%BE%D1%82#.D0.9F.D0.BE.D0.B2.D0.BE.D1.80.D0.BE.D1.82_.D0.B2_.D0.B4.D0.B2.D1.83.D0.BC.D0.B5.D1.80.D0.BD.D0.BE.D0.BC_.D0.BF.D1.80.D0.BE.D1.81.D1.82.D1.80.D0.B0.D0.BD.D1.81.D1.82.D0.B2.D0.B5
+/**
+ * https://ru.wikipedia.org/wiki/%D0%9F%D0%BE%D0%B2%D0%BE%D1%80%D0%BE%D1%82#.D0.9F.D0.BE.D0.B2.D0.BE.D1.80.D0.BE.D1.82_.D0.B2_.D0.B4.D0.B2.D1.83.D0.BC.D0.B5.D1.80.D0.BD.D0.BE.D0.BC_.D0.BF.D1.80.D0.BE.D1.81.D1.82.D1.80.D0.B0.D0.BD.D1.81.D1.82.D0.B2.D0.B5
+ * @param {Position} fromPosition
+ * @param {Position} toPosition
+ * @param {Position} arrowStartPosition
+ */
 CanvasHelper.prototype._drawArrow = function (fromPosition, toPosition, arrowStartPosition) {
     var fromX = fromPosition.getX();
     var fromY = fromPosition.getY();
@@ -139,6 +182,10 @@ CanvasHelper.prototype._drawArrow = function (fromPosition, toPosition, arrowSta
     this._context.stroke();
 };
 
+/**
+ * @param {number} edgesCount
+ * @returns {Function} - Callback that generates shift for the next parallel edge
+ */
 CanvasHelper.prototype._getShiftGenerator = function (edgesCount) {
     if (edgesCount < 1) {
         throw new Error('Edges count must be positive');
@@ -155,4 +202,3 @@ CanvasHelper.prototype._getShiftGenerator = function (edgesCount) {
         return oldShift;
     }
 };
-

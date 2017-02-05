@@ -1,3 +1,15 @@
+"use strict";
+
+module.exports = GraphCanvasView;
+var CanvasHelper = require('../CanvasHelper');
+var Graph = require('../model/Graph');
+var Position = require('../model/Position');
+
+/**
+ * @param {Graph} graph
+ * @param {HTMLCanvasElement} canvas
+ * @constructor
+ */
 function GraphCanvasView(graph, canvas) {
     if (!(graph instanceof Graph)) {
         throw new TypeError('Argument must be of type Graph');
@@ -18,16 +30,21 @@ function GraphCanvasView(graph, canvas) {
     this._vertexRadius = 20;
 }
 
+/**
+ * @param {Vertex} vertex
+ */
 GraphCanvasView.prototype.setVertexAsSelected = function (vertex) {
     if (!this._graph.containsVertex(vertex)) {
         throw new Error('Attempt to select not added vertex');
     }
 
     this._selectedVertex = vertex;
-    // TODO: draw only green circle instead of canvas redrawing
     this.redraw();
 };
 
+/**
+ * @returns {Vertex|null}
+ */
 GraphCanvasView.prototype.getSelectedVertex = function () {
     return this._selectedVertex;
 };
@@ -36,6 +53,10 @@ GraphCanvasView.prototype.discardSelectedVertex = function () {
     this._selectedVertex = null;
 };
 
+/**
+ * @param {Position} position
+ * @returns {Vertex|null}
+ */
 GraphCanvasView.prototype._getVertexByPosition = function (position) {
     if (!(position instanceof Position)) {
         throw new TypeError('Argument must be of type Position');
@@ -47,6 +68,12 @@ GraphCanvasView.prototype._getVertexByPosition = function (position) {
     });
 };
 
+/**
+ * @param {Position} position
+ * @param {Position} circlePosition
+ * @param {number} circleRadius
+ * @returns {boolean}
+ */
 GraphCanvasView.prototype._checkPositionIsInCircle = function (position, circlePosition, circleRadius) {
     if (![position, circlePosition].every(function (position) {
             return position instanceof Position;
@@ -73,6 +100,10 @@ GraphCanvasView.prototype.redraw = function () {
     });
 };
 
+/**
+ * @param {Edge[]} edges
+ * @returns {Array}
+ */
 GraphCanvasView.prototype._splitEdgesByVertices = function (edges) {
     var hashMap = [];
     edges.forEach(function (edge) {
@@ -93,6 +124,9 @@ GraphCanvasView.prototype._splitEdgesByVertices = function (edges) {
     return withoutHash;
 };
 
+/**
+ * @param {Event} event
+ */
 GraphCanvasView.prototype._onClickListener = function (event) {
     var clickPosition = this._getEventPosition(event);
     var vertex = this._getVertexByPosition(clickPosition);
@@ -103,6 +137,9 @@ GraphCanvasView.prototype._onClickListener = function (event) {
     }
 };
 
+/**
+ * @param {Event} event
+ */
 GraphCanvasView.prototype._onContextMenuListener = function (event) {
     event.preventDefault();
     var clickPosition = this._getEventPosition(event);
@@ -128,6 +165,9 @@ GraphCanvasView.prototype._onContextMenuListener = function (event) {
     }
 };
 
+/**
+ * @param {Event} event
+ */
 GraphCanvasView.prototype._onMousemoveListener = function (event) {
     var mousePosition = this._getEventPosition(event);
     if (this._uncompletedEdge) {
@@ -147,6 +187,9 @@ GraphCanvasView.prototype._onMouseupListener = function () {
     }
 };
 
+/**
+ * @param {Event} event
+ */
 GraphCanvasView.prototype._onMousedownListener = function (event) {
     var vertex = this._getVertexByPosition(this._getEventPosition(event));
     if (!vertex) {
@@ -155,6 +198,10 @@ GraphCanvasView.prototype._onMousedownListener = function (event) {
     this._dragVertex = vertex;
 };
 
+/**
+ * @param {Event} event
+ * @returns {Position}
+ */
 GraphCanvasView.prototype._getEventPosition = function (event) {
     var boundingClientRect = this._canvas.getBoundingClientRect();
     return new Position(
@@ -163,10 +210,17 @@ GraphCanvasView.prototype._getEventPosition = function (event) {
     );
 };
 
+/**
+ * @param {Event} event
+ * @returns {boolean}
+ */
 GraphCanvasView.prototype._ctrlKeyIsPressed = function (event) {
     return event.ctrlKey || event.metaKey;
 };
 
+/**
+ * @param {Vertex} vertex
+ */
 GraphCanvasView.prototype._drawVertex = function (vertex) {
     this._canvasHelper.drawCircle(vertex.getPosition(), this._vertexRadius, vertex.getId());
 };
@@ -175,8 +229,9 @@ GraphCanvasView.prototype.getCanvasHelper = function () {
     return this._canvasHelper;
 };
 
+/**
+ * @returns {number}
+ */
 GraphCanvasView.prototype.getVertexRadius = function () {
     return this._vertexRadius;
 };
-
-

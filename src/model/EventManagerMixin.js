@@ -1,6 +1,18 @@
+"use strict";
+
+module.exports = EventManagerMixin;
+
+/**
+ * Simple mixin for managing events
+ *
+ * @constructor
+ */
 function EventManagerMixin() {
     this._eventHandlers = {};
-
+    
+    /**
+     * @param {*} eventName
+     */
     this.on = function (eventName) {
         var that = this;
         var handlers = [].slice.call(arguments, 1);
@@ -12,6 +24,10 @@ function EventManagerMixin() {
         });
     };
 
+    /**
+     * @param {*} eventName
+     * @returns {boolean}
+     */
     this.trigger = function (eventName) {
         if (!this._eventHandlers[eventName]) {
             return false;

@@ -1,3 +1,7 @@
+"use strict";
+
+module.exports = Position;
+
 function Position(x, y) {
     this.setX(x);
     this.setY(y);
@@ -24,4 +28,3 @@ Position.prototype.getX = function () {
 Position.prototype.getY = function () {
     return this._y;
 };
-
