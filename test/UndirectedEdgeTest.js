@@ -7,21 +7,21 @@ describe('DirectedEdge', function () {
     var vertexA = {addEdge: function () {}};
     var vertexB = {addEdge: function () {}};
 
-    var directedEdge = new UndirectedEdge(vertexA, vertexB);
+    var undirectedEdge = new UndirectedEdge(vertexA, vertexB);
 
     it('returns correct incident vertex', function () {
-        assert.equal(vertexA, directedEdge.getIncidentVertexTo(vertexB));
-        assert.equal(vertexB, directedEdge.getIncidentVertexTo(vertexA));
+        assert.equal(vertexA, undirectedEdge.getIncidentVertexTo(vertexB));
+        assert.equal(vertexB, undirectedEdge.getIncidentVertexTo(vertexA));
     });
 
     it('throws an exception if argument for getIncidentVertexTo was not added to the edge', function () {
         assert.throws(function () {
-            directedEdge.getIncidentVertexTo('foo');
+            undirectedEdge.getIncidentVertexTo('foo');
         });
     });
 
     it('contains added vertex', function () {
-        assert.isTrue(directedEdge.containsVertex(vertexB));
-        assert.isTrue(directedEdge.containsVertex(vertexA));
+        assert.isTrue(undirectedEdge.containsVertex(vertexB));
+        assert.isTrue(undirectedEdge.containsVertex(vertexA));
     });
 });

@@ -525,8 +525,27 @@ function GraphConverter() {
             incidenceMatrix[toIndex][columnCounter++] = toValue;
         }
         return incidenceMatrix;
-    }
+    };
+
+    /**
+     * @param {number} rows
+     * @param {number} rowLength
+     * @return {Array}
+     * @private
+     */
+    this._createEmpty2dArray = function (rows, rowLength) {
+        var array = [];
+        var fillWith = 0;
+        for (var i = 0; i < rows; i++) {
+            array[i] = [];
+            for (var j = 0; j < rowLength; j++) {
+                array[i].push(fillWith);
+            }
+        }
+        return array;
+    };
 }
+
 
 },{"./DirectedEdge":4}],9:[function(require,module,exports){
 "use strict";
@@ -1014,8 +1033,7 @@ var DirectedEdge = require('./../model/DirectedEdge');
  */
 function GraphHtmlTableView(graph, graphConverter) {
     this._graph = graph;
-    this._edgesListToIncidenceMatrix = graphConverter.edgesListToIncidenceMatrix;
-    this._verticesListToAdjacencyMatrix = graphConverter.verticesListToAdjacencyMatrix;
+    this._gc = graphConverter;
     this._setUpEventListeners();
 }
 
@@ -1043,13 +1061,13 @@ GraphHtmlTableView.prototype._setUpEventListeners = function () {
 };
 
 GraphHtmlTableView.prototype.rebuildIncidenceMatrixAction = function () {
-    var incidenceMatrix = this._edgesListToIncidenceMatrix(this._graph.getEdgesList(), this._graph.getVerticesList());
+    var incidenceMatrix = this._gc.edgesListToIncidenceMatrix(this._graph.getEdgesList(), this._graph.getVerticesList());
     document.getElementById('incidence-matrix-representation')
         .innerHTML = this._incidenceMatrixToHtmlTable(incidenceMatrix);
 };
 
 GraphHtmlTableView.prototype.rebuildAdjacencyMatrixAction = function () {
-    var adjacencyMatrix = this._verticesListToAdjacencyMatrix(this._graph.getVerticesList());
+    var adjacencyMatrix = this._gc.verticesListToAdjacencyMatrix(this._graph.getVerticesList());
     document.getElementById('adjacency-matrix-representation')
         .innerHTML = this._adjacencyMatrixToHtmlTable(adjacencyMatrix, this._graph.getVerticesList());
 };
@@ -1073,7 +1091,7 @@ GraphHtmlTableView.prototype._buildAdjacencyListHtml = function (verticesList) {
     if (!verticesList.length) {
         return '';
     }
-    var arrow = "&rarr;",
+    var separator = ', ',
         resultHtml = "<table><tr><th>Vertex</th><th>Adjacent vertices</th></tr>";
     verticesList.forEach(function (vertex) {
         resultHtml += "<tr><td>"
@@ -1081,7 +1099,7 @@ GraphHtmlTableView.prototype._buildAdjacencyListHtml = function (verticesList) {
             + "</td><td>"
             + vertex.getIncidentVertices().map(function (vertex) {
                 return vertex.getId();
-            }).join(arrow)
+            }).join(separator)
             + "</td></tr>";
     });
     return resultHtml + "</table>";
@@ -1112,24 +1130,6 @@ GraphHtmlTableView.prototype._adjacencyMatrixToHtmlTable = function (adjacencyMa
             + "</tr>";
     }).join('');
     return resultHtml + "</table>";
-};
-
-/**
- * @param {number} rows
- * @param {number} rowLength
- * @return {Array}
- * @private
- */
-GraphHtmlTableView.prototype._createEmpty2dArray = function (rows, rowLength) {
-    var array = [];
-    var fillWith = 0;
-    for (var i = 0; i < rows; i++) {
-        array[i] = [];
-        for (var j = 0; j < rowLength; j++) {
-            array[i].push(fillWith);
-        }
-    }
-    return array;
 };
 
 /**

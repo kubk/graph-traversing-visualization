@@ -22,10 +22,10 @@ describe('Vertex', function () {
     });
 
     describe('with edges', function () {
-        var vertex1 = new Vertex(1);
-        var vertex2 = new Vertex(2);
-        var vertex3 = new Vertex(3);
-        var vertex4 = new Vertex(4);
+        var v1 = new Vertex(1);
+        var v2 = new Vertex(2);
+        var v3 = new Vertex(3);
+        var v4 = new Vertex(4);
 
         /**
          * 4
@@ -33,29 +33,29 @@ describe('Vertex', function () {
          * 1 -> 2
          *  \-> 3
          */
-        vertex1.createDirectedEdgeTo(vertex2);
-        vertex1.createDirectedEdgeTo(vertex3);
-        vertex4.createUndirectedEdgeTo(vertex1);
+        v1.createDirectedEdgeTo(v2);
+        v1.createDirectedEdgeTo(v3);
+        v4.createUndirectedEdgeTo(v1);
 
         it('calculates in-degree and out-degree',function () {
-            assert.equal(3, vertex1.getOutDegree());
-            assert.equal(1, vertex1.getInDegree());
+            assert.equal(3, v1.getOutDegree());
+            assert.equal(1, v1.getInDegree());
 
-            assert.equal(1, vertex4.getOutDegree());
-            assert.equal(1, vertex4.getInDegree());
+            assert.equal(1, v4.getOutDegree());
+            assert.equal(1, v4.getInDegree());
 
-            assert.equal(0, vertex2.getOutDegree());
-            assert.equal(0, vertex2.getOutDegree());
+            assert.equal(0, v2.getOutDegree());
+            assert.equal(0, v2.getOutDegree());
 
-            assert.equal(1, vertex3.getInDegree());
-            assert.equal(1, vertex3.getInDegree());
+            assert.equal(1, v3.getInDegree());
+            assert.equal(1, v3.getInDegree());
         });
 
         it('calculates incident vertices', function () {
-            assert.sameMembers([vertex1], vertex4.getIncidentVertices());
-            assert.sameMembers([vertex4, vertex2, vertex3], vertex1.getIncidentVertices());
-            expect(vertex2.getIncidentVertices()).to.be.empty;
-            expect(vertex3.getIncidentVertices()).to.be.empty;
+            assert.sameMembers([v1], v4.getIncidentVertices());
+            assert.sameMembers([v4, v2, v3], v1.getIncidentVertices());
+            expect(v2.getIncidentVertices()).to.be.empty;
+            expect(v3.getIncidentVertices()).to.be.empty;
         });
     });
 });

@@ -8,31 +8,34 @@ describe('Graph with vertices', function () {
     it('deletes vertex with all connected edges', function () {
         var graph = new Graph();
 
-        var vertex1 = graph.createVertexWithPosition();
-        var vertex2 = graph.createVertexWithPosition();
-        var vertex3 = graph.createVertexWithPosition();
-        var vertex4 = graph.createVertexWithPosition();
-        var vertex5 = graph.createVertexWithPosition();
+        var v1 = graph.createVertexWithPosition();
+        var v2 = graph.createVertexWithPosition();
+        var v3 = graph.createVertexWithPosition();
+        var v4 = graph.createVertexWithPosition();
+        var v5 = graph.createVertexWithPosition();
 
         /**
          *      5
          *      |
-         * 1 -> 2 -> 3 <- 4
+         * 1 --> 2 --> 3 <-- 4
+         * |     |
+         *  \---/
          */
-        vertex1.createDirectedEdgeTo(vertex2);
-        vertex5.createUndirectedEdgeTo(vertex2);
-        vertex2.createDirectedEdgeTo(vertex3);
-        vertex4.createDirectedEdgeTo(vertex3);
+        v1.createDirectedEdgeTo(v2);
+        v5.createUndirectedEdgeTo(v2);
+        v2.createDirectedEdgeTo(v3);
+        v4.createDirectedEdgeTo(v3);
+        v1.createUndirectedEdgeTo(v2);
 
         /**
          *   5
-         * 1 3 <- 4
+         * 1 3 <-- 4
          */
-        graph.deleteVertex(vertex2);
-        assert.isFalse(graph.containsVertex(vertex2));
-        assert.lengthOf(vertex1.getEdges(), 0);
-        assert.lengthOf(vertex5.getEdges(), 0);
-        assert.lengthOf(vertex3.getEdges(), 1);
-        assert.lengthOf(vertex4.getEdges(), 1);
+        graph.deleteVertex(v2);
+        assert.isFalse(graph.containsVertex(v2));
+        assert.lengthOf(v1.getEdges(), 0);
+        assert.lengthOf(v5.getEdges(), 0);
+        assert.lengthOf(v3.getEdges(), 1);
+        assert.lengthOf(v4.getEdges(), 1);
     });
 });

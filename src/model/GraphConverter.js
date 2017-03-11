@@ -39,5 +39,24 @@ function GraphConverter() {
             incidenceMatrix[toIndex][columnCounter++] = toValue;
         }
         return incidenceMatrix;
-    }
+    };
+
+    /**
+     * @param {number} rows
+     * @param {number} rowLength
+     * @return {Array}
+     * @private
+     */
+    this._createEmpty2dArray = function (rows, rowLength) {
+        var array = [];
+        var fillWith = 0;
+        for (var i = 0; i < rows; i++) {
+            array[i] = [];
+            for (var j = 0; j < rowLength; j++) {
+                array[i].push(fillWith);
+            }
+        }
+        return array;
+    };
 }
+
