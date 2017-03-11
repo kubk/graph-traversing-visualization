@@ -1,6 +1,6 @@
 'use strict';
 
-var assert = require('assert');
+var assert = require('chai').assert;
 var UndirectedEdge = require('../src/model/UndirectedEdge');
 
 describe('DirectedEdge', function () {
@@ -21,7 +21,7 @@ describe('DirectedEdge', function () {
     });
 
     it('contains added vertex', function () {
-        assert.ok(directedEdge.containsVertex(vertexB));
-        assert.ok(directedEdge.containsVertex(vertexA));
+        assert.isTrue(directedEdge.containsVertex(vertexB));
+        assert.isTrue(directedEdge.containsVertex(vertexA));
     });
 });
