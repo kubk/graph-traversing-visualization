@@ -24,6 +24,7 @@ table {
 div[id$="representation"] {
     display: inline-block;
     margin-right: 5px;
+    vertical-align: top;
 }
 
 div[id$="representation"] table {
