@@ -11,7 +11,7 @@ var DirectedEdge = require('./../model/DirectedEdge');
  */
 function GraphHtmlTableView(graph, graphConverter) {
     this._graph = graph;
-    this._gc = graphConverter;
+    this._graphConverter = graphConverter;
     this._setUpEventListeners();
 }
 
@@ -39,13 +39,13 @@ GraphHtmlTableView.prototype._setUpEventListeners = function () {
 };
 
 GraphHtmlTableView.prototype.rebuildIncidenceMatrixAction = function () {
-    var incidenceMatrix = this._gc.edgesListToIncidenceMatrix(this._graph.getEdgesList(), this._graph.getVerticesList());
+    var incidenceMatrix = this._graphConverter.toIncidenceMatrix(this._graph);
     document.getElementById('incidence-matrix-representation')
         .innerHTML = this._incidenceMatrixToHtmlTable(incidenceMatrix);
 };
 
 GraphHtmlTableView.prototype.rebuildAdjacencyMatrixAction = function () {
-    var adjacencyMatrix = this._gc.verticesListToAdjacencyMatrix(this._graph.getVerticesList());
+    var adjacencyMatrix = this._graphConverter.toAdjacencyMatrix(this._graph);
     document.getElementById('adjacency-matrix-representation')
         .innerHTML = this._adjacencyMatrixToHtmlTable(adjacencyMatrix, this._graph.getVerticesList());
 };
