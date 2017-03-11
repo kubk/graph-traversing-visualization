@@ -187,77 +187,47 @@ CanvasHelper.prototype._getShiftGenerator = function (edgesCount) {
         return oldShift;
     }
 };
-},{"./model/DirectedEdge":4,"./model/Position":8}],2:[function(require,module,exports){
+},{"./model/DirectedEdge":4,"./model/Position":9}],2:[function(require,module,exports){
 "use strict";
 
 module.exports = VerticesTraversingAnimation;
+var EventManagerMixin = require('./model/EventManagerMixin');
+var breadFirstSearch = require('./model/traversing-algorithms').bfs;
+var depthFirstSearch = require('./model/traversing-algorithms').dfs;
 
 /**
  * @param {GraphCanvasView} graphCanvasView
  * @param {Element} animationStartButton
- * @param {Element} dfsRadioButton
+ * @param {Element} dfsButton
  * @constructor
  */
-function VerticesTraversingAnimation(graphCanvasView, animationStartButton, dfsRadioButton) {
+function VerticesTraversingAnimation(graphCanvasView, animationStartButton, dfsButton) {
+    EventManagerMixin.call(this);
     this._graphCanvasView = graphCanvasView;
     this._canvasHelper = graphCanvasView.getCanvasHelper();
     this._animationStartButton = animationStartButton;
-    this._dfsRadioButton = dfsRadioButton;
-    this._animationStartButton.addEventListener('click', this.startAnimation.bind(this));
     this._vertexVisitDelay = 500;
     this._visitedVertexColor = "#f00";
+    this._animationStartButton.addEventListener('click', function () {
+        var traversingAlgo = (dfsButton.checked) ? depthFirstSearch : breadFirstSearch;
+        this.startAnimation(traversingAlgo);
+    }.bind(this));
 }
 
-VerticesTraversingAnimation.prototype.startAnimation = function () {
+VerticesTraversingAnimation.EVENT_VERTEX_VISITED = 'vertexVisited';
+
+/**
+ * @param {Function} traversingAlgo
+ * @private
+ */
+VerticesTraversingAnimation.prototype.startAnimation = function (traversingAlgo) {
     var startFromVertex = this._graphCanvasView.getSelectedVertex();
-    var visitedVertices = [];
     if (!startFromVertex) {
         return alert('Select start vertex using Ctrl + left mouse click');
     }
-    if (this._dfsRadioButton.checked) {
-        this.depthFirstSearch(startFromVertex, visitedVertices);
-    } else {
-        visitedVertices = this.breadthFirstSearch(startFromVertex);
-    }
+    var visitedVertices = traversingAlgo(startFromVertex);
     this._animateVisited(visitedVertices);
     this._graphCanvasView.discardSelectedVertex();
-};
-
-/**
- * @param {Vertex} vertex
- * @param {Vertex[]} visited
- */
-VerticesTraversingAnimation.prototype.depthFirstSearch = function (vertex, visited) {
-    if (visited.indexOf(vertex) === -1) {
-        visited.push(vertex);
-        var that = this;
-        vertex.getIncidentVertices().forEach(function (nextVertex) {
-            that.depthFirstSearch(nextVertex, visited);
-        });
-    }
-};
-
-/**
- * @param {Vertex} vertex
- * @returns {Vertex[]}
- */
-VerticesTraversingAnimation.prototype.breadthFirstSearch = function (vertex) {
-    var queue = [vertex],
-        visitedVertices = [],
-        currentVertex;
-    do {
-        currentVertex = queue.shift();
-        if (visitedVertices.indexOf(currentVertex) !== -1) {
-            continue;
-        }
-        visitedVertices.push(currentVertex);
-        currentVertex.getIncidentVertices().forEach(function (nextVertex) {
-            if (visitedVertices.indexOf(nextVertex) === -1) {
-                queue.push(nextVertex);
-            }
-        });
-    } while (queue.length);
-    return visitedVertices;
 };
 
 /**
@@ -267,7 +237,7 @@ VerticesTraversingAnimation.prototype.breadthFirstSearch = function (vertex) {
 VerticesTraversingAnimation.prototype._animateVisited = function (visitedVertices) {
     var currentVertex = visitedVertices.shift();
     if (currentVertex) {
-        console.log(currentVertex);
+        this.trigger(VerticesTraversingAnimation.EVENT_VERTEX_VISITED);
         this._canvasHelper.drawCircle(
             currentVertex.getPosition(),
             this._graphCanvasView.getVertexRadius() + 10,
@@ -279,14 +249,15 @@ VerticesTraversingAnimation.prototype._animateVisited = function (visitedVertice
         alert('Animation completed');
     }
 };
-},{}],3:[function(require,module,exports){
+},{"./model/EventManagerMixin":6,"./model/traversing-algorithms":12}],3:[function(require,module,exports){
 var Graph = require('./model/Graph');
 var GraphCanvasView = require('./view/GraphCanvasView');
 var GraphHtmlTableView = require('./view/GraphHtmlTableView');
 var VerticesTraversingAnimation = require('./VerticesTraversingAnimation');
+var GraphConverter = require('./model/GraphConverter');
 
 var graph = new Graph();
-var graphHtmlTableView = new GraphHtmlTableView(graph);
+var graphHtmlTableView = new GraphHtmlTableView(graph, new GraphConverter());
 
 window.addEventListener('load', function () {
     var graphCanvasView = new GraphCanvasView(graph, document.getElementById('canvas'));
@@ -296,7 +267,7 @@ window.addEventListener('load', function () {
         document.getElementById('depth-first-search')
     );
 });
-},{"./VerticesTraversingAnimation":2,"./model/Graph":7,"./view/GraphCanvasView":11,"./view/GraphHtmlTableView":12}],4:[function(require,module,exports){
+},{"./VerticesTraversingAnimation":2,"./model/Graph":7,"./model/GraphConverter":8,"./view/GraphCanvasView":13,"./view/GraphHtmlTableView":14}],4:[function(require,module,exports){
 "use strict";
 
 module.exports = DirectedEdge;
@@ -372,7 +343,7 @@ Edge.prototype.containsVertex = function (vertex) {
 Edge.prototype.getIncidentVertexTo = function () {
     throw new Error('Method declared as abstract and must be overridden');
 };
-},{"./Vertex":10}],6:[function(require,module,exports){
+},{"./Vertex":11}],6:[function(require,module,exports){
 "use strict";
 
 module.exports = EventManagerMixin;
@@ -512,7 +483,52 @@ Graph.prototype._getVertexIdGenerator = function () {
         return String.fromCharCode(current++);
     }
 };
-},{"./Edge":5,"./EventManagerMixin":6,"./Vertex":10}],8:[function(require,module,exports){
+},{"./Edge":5,"./EventManagerMixin":6,"./Vertex":11}],8:[function(require,module,exports){
+"use strict";
+
+module.exports = GraphConverter;
+var DirectedEdge = require('./DirectedEdge');
+
+function GraphConverter() {
+    /**
+     * @param {Vertex[]} verticesList
+     * @return {Array}
+     */
+    this.verticesListToAdjacencyMatrix = function (verticesList) {
+        return verticesList.map(function (vertex) {
+            return verticesList.map(function (vertexInRow) {
+                return vertex.getIncidentVertices().filter(function (vertex) {
+                    return vertex === vertexInRow;
+                }).length;
+            });
+        });
+    };
+
+    /**
+     * @param {Edge[]} edgesList
+     * @param {Vertex[]} verticesList
+     * @return {Array}
+     */
+    this.edgesListToIncidenceMatrix = function (edgesList, verticesList) {
+        var incidenceMatrix = this._createEmpty2dArray(verticesList.length, edgesList.length);
+        var FROM_VERTEX = -1;
+        var TO_VERTEX = 1;
+
+        var columnCounter = 0;
+        for (var i = 0; i < edgesList.length; i++) {
+            var edge = edgesList[i];
+            var fromIndex = verticesList.indexOf(edge.getVertices()[0]);
+            var toIndex = verticesList.indexOf(edge.getVertices()[1]);
+            var fromValue = (edge instanceof DirectedEdge) ? FROM_VERTEX : TO_VERTEX;
+            var toValue = TO_VERTEX;
+            incidenceMatrix[fromIndex][columnCounter] = fromValue;
+            incidenceMatrix[toIndex][columnCounter++] = toValue;
+        }
+        return incidenceMatrix;
+    }
+}
+
+},{"./DirectedEdge":4}],9:[function(require,module,exports){
 "use strict";
 
 module.exports = Position;
@@ -543,7 +559,7 @@ Position.prototype.getX = function () {
 Position.prototype.getY = function () {
     return this._y;
 };
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 
 module.exports = UndirectedEdge;
@@ -577,7 +593,7 @@ UndirectedEdge.prototype.getIncidentVertexTo = function (vertex) {
         default: throw new Error('Invalid vertex: ' + vertex);
     }
 };
-},{"./Edge":5}],10:[function(require,module,exports){
+},{"./Edge":5}],11:[function(require,module,exports){
 "use strict";
 
 module.exports = Vertex;
@@ -693,7 +709,60 @@ Vertex.prototype.getOutDegree = function () {
             : outDegree;
     }, 0);
 };
-},{"./DirectedEdge":4,"./Position":8,"./UndirectedEdge":9}],11:[function(require,module,exports){
+},{"./DirectedEdge":4,"./Position":9,"./UndirectedEdge":10}],12:[function(require,module,exports){
+"use strict";
+
+module.exports = {
+    bfs: breadthFirstSearch,
+    dfs: depthFirstSearch
+};
+
+/**
+ * @param {Vertex} vertex
+ * @returns {Vertex[]}
+ */
+function depthFirstSearch(vertex) {
+    var stack = [vertex],
+        visited = [];
+
+    while (stack.length) {
+        var current = stack.pop();
+        if (visited.indexOf(current) !== -1) {
+            continue;
+        }
+        visited.push(current);
+        current.getIncidentVertices().forEach(function (incident) {
+            stack.push(incident);
+        });
+    }
+
+    return visited;
+}
+
+/**
+ * @param {Vertex} vertex
+ * @returns {Vertex[]}
+ */
+function breadthFirstSearch(vertex) {
+    var queue = [vertex],
+        visitedVertices = [],
+        currentVertex;
+
+    do {
+        currentVertex = queue.shift();
+        if (visitedVertices.indexOf(currentVertex) !== -1) {
+            continue;
+        }
+        visitedVertices.push(currentVertex);
+        currentVertex.getIncidentVertices().forEach(function (nextVertex) {
+            queue.push(nextVertex);
+        });
+    } while (queue.length);
+
+    return visitedVertices;
+}
+
+},{}],13:[function(require,module,exports){
 "use strict";
 
 module.exports = GraphCanvasView;
@@ -931,7 +1000,7 @@ GraphCanvasView.prototype.getCanvasHelper = function () {
 GraphCanvasView.prototype.getVertexRadius = function () {
     return this._vertexRadius;
 };
-},{"../CanvasHelper":1,"../model/Graph":7,"../model/Position":8}],12:[function(require,module,exports){
+},{"../CanvasHelper":1,"../model/Graph":7,"../model/Position":9}],14:[function(require,module,exports){
 "use strict";
 
 module.exports = GraphHtmlTableView;
@@ -940,10 +1009,13 @@ var DirectedEdge = require('./../model/DirectedEdge');
 
 /**
  * @param {Graph} graph
+ * @param {GraphConverter} graphConverter
  * @constructor
  */
-function GraphHtmlTableView(graph) {
+function GraphHtmlTableView(graph, graphConverter) {
     this._graph = graph;
+    this._edgesListToIncidenceMatrix = graphConverter.edgesListToIncidenceMatrix;
+    this._verticesListToAdjacencyMatrix = graphConverter.verticesListToAdjacencyMatrix;
     this._setUpEventListeners();
 }
 
@@ -1015,20 +1087,6 @@ GraphHtmlTableView.prototype._buildAdjacencyListHtml = function (verticesList) {
     return resultHtml + "</table>";
 };
 
-/**
- * @param {Vertex[]} verticesList
- * @return {Array}
- * @private
- */
-GraphHtmlTableView.prototype._verticesListToAdjacencyMatrix = function (verticesList) {
-    return verticesList.map(function (vertex) {
-        return verticesList.map(function (vertexInRow) {
-            return vertex.getIncidentVertices().filter(function (vertex) {
-                return vertex === vertexInRow;
-            }).length;
-        });
-    });
-};
 
 /**
  * @param {Array} adjacencyMatrix
@@ -1054,29 +1112,6 @@ GraphHtmlTableView.prototype._adjacencyMatrixToHtmlTable = function (adjacencyMa
             + "</tr>";
     }).join('');
     return resultHtml + "</table>";
-};
-
-/**
- * @param {Edge[]} edgesList
- * @param {Vertex[]} verticesList
- * @return {Array}
- */
-GraphHtmlTableView.prototype._edgesListToIncidenceMatrix = function (edgesList, verticesList) {
-    var incidenceMatrix = this._createEmpty2dArray(verticesList.length, edgesList.length);
-    var FROM_VERTEX = -1;
-    var TO_VERTEX = 1;
-
-    var columnCounter = 0;
-    for (var i = 0; i < edgesList.length; i++) {
-        var edge = edgesList[i];
-        var fromIndex = verticesList.indexOf(edge.getVertices()[0]);
-        var toIndex = verticesList.indexOf(edge.getVertices()[1]);
-        var fromValue = (edge instanceof DirectedEdge) ? FROM_VERTEX : TO_VERTEX;
-        var toValue = TO_VERTEX;
-        incidenceMatrix[fromIndex][columnCounter] = fromValue;
-        incidenceMatrix[toIndex][columnCounter++] = toValue;
-    }
-    return incidenceMatrix;
 };
 
 /**
