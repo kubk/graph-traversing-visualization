@@ -10,15 +10,10 @@ var DirectedEdge = require('./model/DirectedEdge');
  * @constructor
  */
 function CanvasHelper(canvas) {
-    if (!canvas.getContext) {
-        throw new TypeError('Canvas not supported in your browser');
-    }
-
     this._context = canvas.getContext('2d');
     this._width = canvas.width;
     this._height = canvas.height;
     this._fontSize = 13;
-    // Divide curve/line in ratio (for edge direction)
     this._ratio = 0.5;
     this._arrowLength = 20;
 }
@@ -44,11 +39,6 @@ CanvasHelper.prototype.drawLine = function (isDirected, fromPosition, toPosition
     if (strokeStyle) {
         this._context.strokeStyle = strokeStyle;
     }
-    if (![fromPosition, toPosition].every(function (object) {
-            return object instanceof Position;
-        })) {
-        throw new TypeError('Positions must be of type Position');
-    }
 
     this._context.beginPath();
     this._context.moveTo(fromPosition.getX(), fromPosition.getY());
@@ -63,12 +53,13 @@ CanvasHelper.prototype.drawLine = function (isDirected, fromPosition, toPosition
 };
 
 /**
- * Calculates position of point, that divides the line in a given ratio
+ * Calculates position of the point, that divides the line in a given ratio
  *
  * @param {number} ratio
  * @param {Position} fromPosition
  * @param {Position} toPosition
- * @returns {Position}
+ * @return {Position}
+ * @private
  */
 CanvasHelper.prototype._getPositionDividedInRatio = function (ratio, fromPosition, toPosition) {
     return new Position(
@@ -84,16 +75,6 @@ CanvasHelper.prototype._getPositionDividedInRatio = function (ratio, fromPositio
  * @param {*} [color]
  */
 CanvasHelper.prototype.drawCircle = function (position, radius, textInside, color) {
-    if (!textInside) {
-        throw new Error('Text inside circle is not specified');
-    }
-    if (!Number.isInteger(radius)) {
-        throw new TypeError('Radius must be an integer');
-    }
-    if (!(position instanceof Position)) {
-        throw new TypeError('Position must be of type Position')
-    }
-
     this._context.beginPath();
     this._context.arc(position.getX(), position.getY(), radius, 0, Math.PI * 2);
     this._context.fillStyle = color || "#00f";
@@ -142,7 +123,8 @@ CanvasHelper.prototype.drawEdges = function (edges) {
  * @param {number} p0
  * @param {number} p1
  * @param {number} p2
- * @returns {number}
+ * @return {number}
+ * @private
  */
 CanvasHelper.prototype._getQuadraticCurveCoord = function (t, p0, p1, p2) {
     if (t < 0 || t > 1) {
@@ -157,6 +139,7 @@ CanvasHelper.prototype._getQuadraticCurveCoord = function (t, p0, p1, p2) {
  * @param {Position} fromPosition
  * @param {Position} toPosition
  * @param {Position} arrowStartPosition
+ * @private
  */
 CanvasHelper.prototype._drawArrow = function (fromPosition, toPosition, arrowStartPosition) {
     var fromX = fromPosition.getX();
@@ -185,7 +168,8 @@ CanvasHelper.prototype._drawArrow = function (fromPosition, toPosition, arrowSta
 
 /**
  * @param {number} edgesCount
- * @returns {Function} - Callback that generates shift for the next parallel edge
+ * @return {Function} - Callback that generates shift for the next parallel edge
+ * @private
  */
 CanvasHelper.prototype._getShiftGenerator = function (edgesCount) {
     if (edgesCount < 1) {
@@ -207,7 +191,6 @@ CanvasHelper.prototype._getShiftGenerator = function (edgesCount) {
 "use strict";
 
 module.exports = VerticesTraversingAnimation;
-var GraphCanvasView = require('./view/GraphCanvasView');
 
 /**
  * @param {GraphCanvasView} graphCanvasView
@@ -216,10 +199,6 @@ var GraphCanvasView = require('./view/GraphCanvasView');
  * @constructor
  */
 function VerticesTraversingAnimation(graphCanvasView, animationStartButton, dfsRadioButton) {
-    if (!(graphCanvasView instanceof GraphCanvasView)) {
-        throw new TypeError('Argument must be of type GraphCanvasView');
-    }
-    
     this._graphCanvasView = graphCanvasView;
     this._canvasHelper = graphCanvasView.getCanvasHelper();
     this._animationStartButton = animationStartButton;
@@ -283,6 +262,7 @@ VerticesTraversingAnimation.prototype.breadthFirstSearch = function (vertex) {
 
 /**
  * @param {Vertex[]} visitedVertices
+ * @private
  */
 VerticesTraversingAnimation.prototype._animateVisited = function (visitedVertices) {
     var currentVertex = visitedVertices.shift();
@@ -299,7 +279,7 @@ VerticesTraversingAnimation.prototype._animateVisited = function (visitedVertice
         alert('Animation completed');
     }
 };
-},{"./view/GraphCanvasView":11}],3:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var Graph = require('./model/Graph');
 var GraphCanvasView = require('./view/GraphCanvasView');
 var GraphHtmlTableView = require('./view/GraphHtmlTableView');
@@ -340,7 +320,7 @@ function DirectedEdge(fromVertex, toVertex) {
 DirectedEdge.prototype = Object.create(Edge.prototype);
 
 /**
- * @returns {Vertex}
+ * @return {Vertex}
  */
 DirectedEdge.prototype.getFromVertex = function () {
     return this._fromVertex;
@@ -348,15 +328,13 @@ DirectedEdge.prototype.getFromVertex = function () {
 
 /**
  * @param {Vertex} vertex
- * @returns {Vertex}
+ * @return {Vertex}
  */
 DirectedEdge.prototype.getIncidentVertexTo = function (vertex) {
-    if (this._fromVertex === vertex) {
-        return this._toVertex;
-    } else if (this._toVertex === vertex) {
-        return this._fromVertex;
-    } else {
-        throw new Error('Invalid vertex: ' + vertex);
+    switch (vertex) {
+        case this._fromVertex: return this._toVertex;
+        case this._toVertex: return this._fromVertex;
+        default: throw new Error('Invalid vertex: ' + vertex)
     }
 };
 },{"./Edge":5}],5:[function(require,module,exports){
@@ -373,14 +351,11 @@ var Vertex = require('./Vertex');
  * @constructor
  */
 function Edge(vertexA, vertexB) {
-    if (![vertexA, vertexB].every(function (v) { return v instanceof Vertex; })) {
-        throw new TypeError('Vertices must be of type Vertex');
-    }
     this._vertices = [vertexA, vertexB];
 }
 
 /**
- * @returns {Vertex[]}
+ * @return {Vertex[]}
  */
 Edge.prototype.getVertices = function () {
     return this._vertices;
@@ -388,7 +363,7 @@ Edge.prototype.getVertices = function () {
 
 /**
  * @param {Vertex} vertex
- * @returns {boolean}
+ * @return {boolean}
  */
 Edge.prototype.containsVertex = function (vertex) {
     return this._vertices.indexOf(vertex) !== -1;
@@ -414,19 +389,19 @@ function EventManagerMixin() {
      * @param {*} eventName
      */
     this.on = function (eventName) {
-        var that = this;
         var handlers = [].slice.call(arguments, 1);
+        if (!this._eventHandlers[eventName]) {
+            this._eventHandlers[eventName] = [];
+        }
+        var that = this;
         handlers.forEach(function (handler) {
-            if (!that._eventHandlers[eventName]) {
-                that._eventHandlers[eventName] = [];
-            }
             that._eventHandlers[eventName].push(handler);
         });
     };
 
     /**
      * @param {*} eventName
-     * @returns {boolean}
+     * @return {boolean}
      */
     this.trigger = function (eventName) {
         if (!this._eventHandlers[eventName]) {
@@ -439,8 +414,6 @@ function EventManagerMixin() {
         });
     };
 }
-
-
 },{}],7:[function(require,module,exports){
 "use strict";
 
@@ -448,7 +421,6 @@ module.exports = Graph;
 var EventManagerMixin = require('./EventManagerMixin');
 var Edge = require('./Edge');
 var Vertex = require('./Vertex');
-var Position = require('./Position');
 
 /**
  * @param {Function} [generateVertexId]
@@ -469,7 +441,7 @@ Graph.EVENT_EDGE_ADDED = 'edgeAdded';
 
 /**
  * @param {Vertex} vertex
- * @returns {boolean}
+ * @return {boolean}
  */
 Graph.prototype.containsVertex = function (vertex) {
     return this._verticesList.indexOf(vertex) !== -1;
@@ -479,17 +451,15 @@ Graph.prototype.containsVertex = function (vertex) {
  * @param {Edge} edge
  */
 Graph.prototype.addEdge = function (edge) {
-    if (!(edge instanceof Edge)) {
-        throw new TypeError('Argument must be of type Edge');
-    }
     this._edgesList.push(edge);
     this.trigger(Graph.EVENT_EDGE_ADDED);
 };
 
-Graph.prototype._createVertexWithPosition = function (position) {
-    if (!(position instanceof Position)) {
-        throw new TypeError('Argument must be of type Position');
-    }
+/**
+ * @param {Position} position
+ * @return {Vertex}
+ */
+Graph.prototype.createVertexWithPosition = function (position) {
     var vertex = new Vertex(this._generateVertexId(), position);
     this._verticesList.push(vertex);
     this.trigger(Graph.EVENT_VERTEX_CREATED, vertex);
@@ -497,14 +467,14 @@ Graph.prototype._createVertexWithPosition = function (position) {
 };
 
 /**
- * @returns {Vertex[]}
+ * @return {Vertex[]}
  */
 Graph.prototype.getVerticesList = function () {
     return this._verticesList;
 };
 
 /**
- * @returns {Edge[]}
+ * @return {Edge[]}
  */
 Graph.prototype.getEdgesList = function () {
     return this._edgesList;
@@ -533,7 +503,7 @@ Graph.prototype.deleteVertex = function (vertex) {
 };
 
 /**
- * @returns {Function}
+ * @return {Function}
  * @private
  */
 Graph.prototype._getVertexIdGenerator = function () {
@@ -542,7 +512,7 @@ Graph.prototype._getVertexIdGenerator = function () {
         return String.fromCharCode(current++);
     }
 };
-},{"./Edge":5,"./EventManagerMixin":6,"./Position":8,"./Vertex":10}],8:[function(require,module,exports){
+},{"./Edge":5,"./EventManagerMixin":6,"./Vertex":10}],8:[function(require,module,exports){
 "use strict";
 
 module.exports = Position;
@@ -598,22 +568,19 @@ UndirectedEdge.prototype = Object.create(Edge.prototype);
 
 /**
  * @param {Vertex} vertex
- * @returns {Vertex}
+ * @return {Vertex}
  */
 UndirectedEdge.prototype.getIncidentVertexTo = function (vertex) {
-    if (this._vertexA === vertex) {
-        return this._vertexB;
-    } else if (this._vertexB === vertex) {
-        return this._vertexA;
-    } else {
-        throw new Error('Invalid vertex: ' + vertex.getId());
+    switch (vertex) {
+        case this._vertexA: return this._vertexB;
+        case this._vertexB: return this._vertexA;
+        default: throw new Error('Invalid vertex: ' + vertex);
     }
 };
 },{"./Edge":5}],10:[function(require,module,exports){
 "use strict";
 
 module.exports = Vertex;
-var Edge = require('./Edge');
 var DirectedEdge = require('./DirectedEdge');
 var UndirectedEdge = require('./UndirectedEdge');
 var Position = require('./Position');
@@ -642,14 +609,11 @@ Vertex.prototype.getPosition = function () {
  * @param {Position} position
  */
 Vertex.prototype.setPosition = function (position) {
-    if (!(position instanceof Position)) {
-        throw new TypeError('Argument must be of type Position');
-    }
     this._position = position;
 };
 
 /**
- * @returns {string|number}
+ * @return {string|number}
  */
 Vertex.prototype.getId = function () {
     return this._id;
@@ -663,39 +627,37 @@ Vertex.prototype.filterEdges = function (callback) {
 };
 
 /**
+ * @return {Array<Edge>}
+ */
+Vertex.prototype.getEdges = function () {
+    return this._edges;
+};
+
+/**
  * @param {Edge} edge
  */
 Vertex.prototype.addEdge = function (edge) {
-    if (!(edge instanceof Edge)) {
-        throw new TypeError('Argument must be of type Edge');
-    }
     this._edges.push(edge);
 };
 
 /**
  * @param {Vertex} vertex
- * @returns {DirectedEdge}
+ * @return {DirectedEdge}
  */
 Vertex.prototype.createDirectedEdgeTo = function (vertex) {
-    if (!(vertex instanceof Vertex)) {
-        throw new TypeError('Argument must be of type Vertex');
-    }
     return new DirectedEdge(this, vertex);
 };
 
 /**
  * @param {Vertex} vertex
- * @returns {UndirectedEdge}
+ * @return {UndirectedEdge}
  */
 Vertex.prototype.createUndirectedEdgeTo = function (vertex) {
-    if (!(vertex instanceof Vertex)) {
-        throw new TypeError('Argument must be of type Vertex');
-    }
     return new UndirectedEdge(this, vertex);
 };
 
 /**
- * @returns {Vertex[]}
+ * @return {Vertex[]}
  */
 Vertex.prototype.getIncidentVertices = function () {
     var incidentVertices = [];
@@ -709,7 +671,7 @@ Vertex.prototype.getIncidentVertices = function () {
 };
 
 /**
- * @returns {number}
+ * @return {number}
  */
 Vertex.prototype.getInDegree = function () {
     var that = this;
@@ -721,7 +683,7 @@ Vertex.prototype.getInDegree = function () {
 };
 
 /**
- * @returns {number}
+ * @return {number}
  */
 Vertex.prototype.getOutDegree = function () {
     var that = this;
@@ -731,7 +693,7 @@ Vertex.prototype.getOutDegree = function () {
             : outDegree;
     }, 0);
 };
-},{"./DirectedEdge":4,"./Edge":5,"./Position":8,"./UndirectedEdge":9}],11:[function(require,module,exports){
+},{"./DirectedEdge":4,"./Position":8,"./UndirectedEdge":9}],11:[function(require,module,exports){
 "use strict";
 
 module.exports = GraphCanvasView;
@@ -745,9 +707,6 @@ var Position = require('../model/Position');
  * @constructor
  */
 function GraphCanvasView(graph, canvas) {
-    if (!(graph instanceof Graph)) {
-        throw new TypeError('Argument must be of type Graph');
-    }
     this._graph = graph;
     this._canvas = canvas;
     this._canvasHelper = new CanvasHelper(canvas);
@@ -777,7 +736,7 @@ GraphCanvasView.prototype.setVertexAsSelected = function (vertex) {
 };
 
 /**
- * @returns {Vertex|null}
+ * @return {Vertex|null}
  */
 GraphCanvasView.prototype.getSelectedVertex = function () {
     return this._selectedVertex;
@@ -789,13 +748,10 @@ GraphCanvasView.prototype.discardSelectedVertex = function () {
 
 /**
  * @param {Position} position
- * @returns {Vertex|null}
+ * @return {Vertex|null}
+ * @private
  */
 GraphCanvasView.prototype._getVertexByPosition = function (position) {
-    if (!(position instanceof Position)) {
-        throw new TypeError('Argument must be of type Position');
-    }
-
     var that = this;
     return this._graph.getVerticesList().find(function (vertex) {
         return that._checkPositionIsInCircle(position, vertex.getPosition(), that._vertexRadius);
@@ -806,15 +762,9 @@ GraphCanvasView.prototype._getVertexByPosition = function (position) {
  * @param {Position} position
  * @param {Position} circlePosition
  * @param {number} circleRadius
- * @returns {boolean}
+ * @return {boolean}
  */
 GraphCanvasView.prototype._checkPositionIsInCircle = function (position, circlePosition, circleRadius) {
-    if (![position, circlePosition].every(function (position) {
-            return position instanceof Position;
-        })) {
-        throw new TypeError('Invalid positions');
-    }
-
     return Math.pow(position.getX() - circlePosition.getX(), 2)
         + Math.pow(position.getY() - circlePosition.getY(), 2)
         <= Math.pow(circleRadius, 2);
@@ -836,7 +786,8 @@ GraphCanvasView.prototype.redraw = function () {
 
 /**
  * @param {Edge[]} edges
- * @returns {Array}
+ * @return {Array}
+ * @private
  */
 GraphCanvasView.prototype._splitEdgesByVertices = function (edges) {
     var hashMap = [];
@@ -860,12 +811,13 @@ GraphCanvasView.prototype._splitEdgesByVertices = function (edges) {
 
 /**
  * @param {Event} event
+ * @private
  */
 GraphCanvasView.prototype._onClickListener = function (event) {
     var clickPosition = this._getEventPosition(event);
     var vertex = this._getVertexByPosition(clickPosition);
     if (!this._dragVertex && !vertex) {
-        this._graph._createVertexWithPosition(clickPosition);
+        this._graph.createVertexWithPosition(clickPosition);
     } else if (vertex && this._ctrlKeyIsPressed(event)) {
         this.setVertexAsSelected(vertex);
     }
@@ -873,6 +825,7 @@ GraphCanvasView.prototype._onClickListener = function (event) {
 
 /**
  * @param {Event} event
+ * @private
  */
 GraphCanvasView.prototype._onContextMenuListener = function (event) {
     event.preventDefault();
@@ -901,6 +854,7 @@ GraphCanvasView.prototype._onContextMenuListener = function (event) {
 
 /**
  * @param {Event} event
+ * @private
  */
 GraphCanvasView.prototype._onMousemoveListener = function (event) {
     var mousePosition = this._getEventPosition(event);
@@ -923,6 +877,7 @@ GraphCanvasView.prototype._onMouseupListener = function () {
 
 /**
  * @param {Event} event
+ * @private
  */
 GraphCanvasView.prototype._onMousedownListener = function (event) {
     var vertex = this._getVertexByPosition(this._getEventPosition(event));
@@ -934,7 +889,8 @@ GraphCanvasView.prototype._onMousedownListener = function (event) {
 
 /**
  * @param {Event} event
- * @returns {Position}
+ * @return {Position}
+ * @private
  */
 GraphCanvasView.prototype._getEventPosition = function (event) {
     var boundingClientRect = this._canvas.getBoundingClientRect();
@@ -946,7 +902,8 @@ GraphCanvasView.prototype._getEventPosition = function (event) {
 
 /**
  * @param {Event} event
- * @returns {boolean}
+ * @return {boolean}
+ * @private
  */
 GraphCanvasView.prototype._ctrlKeyIsPressed = function (event) {
     return event.ctrlKey || event.metaKey;
@@ -954,17 +911,22 @@ GraphCanvasView.prototype._ctrlKeyIsPressed = function (event) {
 
 /**
  * @param {Vertex} vertex
+ * @private
  */
 GraphCanvasView.prototype._drawVertex = function (vertex) {
     this._canvasHelper.drawCircle(vertex.getPosition(), this._vertexRadius, vertex.getId());
 };
 
+/**
+ * TODO: delete this
+ * @return {CanvasHelper}
+ */
 GraphCanvasView.prototype.getCanvasHelper = function () {
     return this._canvasHelper;
 };
 
 /**
- * @returns {number}
+ * @return {number}
  */
 GraphCanvasView.prototype.getVertexRadius = function () {
     return this._vertexRadius;
@@ -978,20 +940,17 @@ var DirectedEdge = require('./../model/DirectedEdge');
 
 /**
  * @param {Graph} graph
- * @param {boolean} [isStatic]
  * @constructor
  */
-function GraphHtmlTableView(graph, isStatic) {
-    if (!(graph instanceof Graph)) {
-        throw new TypeError('Argument must be of type Graph');
-    }
+function GraphHtmlTableView(graph) {
     this._graph = graph;
-    if (!isStatic) {
-        this.setUpEventListeners();
-    }
+    this._setUpEventListeners();
 }
 
-GraphHtmlTableView.prototype.setUpEventListeners = function () {
+/**
+ * @private
+ */
+GraphHtmlTableView.prototype._setUpEventListeners = function () {
     this._graph.on(Graph.EVENT_VERTEX_CREATED,
         this.rebuildAdjacencyListAction.bind(this),
         this.rebuildAdjacencyMatrixAction.bind(this),
@@ -1035,7 +994,8 @@ GraphHtmlTableView.prototype.rebuildDegreesTable = function () {
 
 /**
  * @param {Vertex[]} verticesList
- * @returns {string}
+ * @return {string}
+ * @private
  */
 GraphHtmlTableView.prototype._buildAdjacencyListHtml = function (verticesList) {
     if (!verticesList.length) {
@@ -1057,7 +1017,8 @@ GraphHtmlTableView.prototype._buildAdjacencyListHtml = function (verticesList) {
 
 /**
  * @param {Vertex[]} verticesList
- * @returns {Array}
+ * @return {Array}
+ * @private
  */
 GraphHtmlTableView.prototype._verticesListToAdjacencyMatrix = function (verticesList) {
     return verticesList.map(function (vertex) {
@@ -1071,8 +1032,9 @@ GraphHtmlTableView.prototype._verticesListToAdjacencyMatrix = function (vertices
 
 /**
  * @param {Array} adjacencyMatrix
- * @param {Vertex} verticesList
- * @returns {string}
+ * @param {Array<Vertex>} verticesList
+ * @return {string}
+ * @private
  */
 GraphHtmlTableView.prototype._adjacencyMatrixToHtmlTable = function (adjacencyMatrix, verticesList) {
     if (!verticesList.length) {
@@ -1097,7 +1059,7 @@ GraphHtmlTableView.prototype._adjacencyMatrixToHtmlTable = function (adjacencyMa
 /**
  * @param {Edge[]} edgesList
  * @param {Vertex[]} verticesList
- * @returns {Array}
+ * @return {Array}
  */
 GraphHtmlTableView.prototype._edgesListToIncidenceMatrix = function (edgesList, verticesList) {
     var incidenceMatrix = this._createEmpty2dArray(verticesList.length, edgesList.length);
@@ -1120,7 +1082,8 @@ GraphHtmlTableView.prototype._edgesListToIncidenceMatrix = function (edgesList, 
 /**
  * @param {number} rows
  * @param {number} rowLength
- * @returns {Array}
+ * @return {Array}
+ * @private
  */
 GraphHtmlTableView.prototype._createEmpty2dArray = function (rows, rowLength) {
     var array = [];
@@ -1136,7 +1099,8 @@ GraphHtmlTableView.prototype._createEmpty2dArray = function (rows, rowLength) {
 
 /**
  * @param {Array} incidenceMatrix
- * @returns {string}
+ * @return {string}
+ * @private
  */
 GraphHtmlTableView.prototype._incidenceMatrixToHtmlTable = function (incidenceMatrix) {
     if (!incidenceMatrix.length || incidenceMatrix.every(function (row) {
@@ -1155,7 +1119,8 @@ GraphHtmlTableView.prototype._incidenceMatrixToHtmlTable = function (incidenceMa
 
 /**
  * @param {Graph} graph
- * @returns {string}
+ * @return {string}
+ * @private
  */
 GraphHtmlTableView.prototype._buildDegreesTable = function (graph) {
     var result = "<table><tr><th></th><th>inDegree</th><th>outDegree</th></tr>";

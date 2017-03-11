@@ -14,19 +14,19 @@ function EventManagerMixin() {
      * @param {*} eventName
      */
     this.on = function (eventName) {
-        var that = this;
         var handlers = [].slice.call(arguments, 1);
+        if (!this._eventHandlers[eventName]) {
+            this._eventHandlers[eventName] = [];
+        }
+        var that = this;
         handlers.forEach(function (handler) {
-            if (!that._eventHandlers[eventName]) {
-                that._eventHandlers[eventName] = [];
-            }
             that._eventHandlers[eventName].push(handler);
         });
     };
 
     /**
      * @param {*} eventName
-     * @returns {boolean}
+     * @return {boolean}
      */
     this.trigger = function (eventName) {
         if (!this._eventHandlers[eventName]) {
@@ -39,4 +39,3 @@ function EventManagerMixin() {
         });
     };
 }
-

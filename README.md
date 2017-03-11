@@ -1,6 +1,6 @@
 # kubk/graph-traversing-visualization
 
-Graph representation/manipulation/traversal visualization using vanilla JavaScript + Canvas API.
+Graph manipulation/traversing visualization using vanilla JavaScript + Canvas API.
 
 ## Features
 - Draggable vertices
@@ -8,14 +8,13 @@ Graph representation/manipulation/traversal visualization using vanilla JavaScri
 - Dynamic building of [adjacency matrix](https://en.wikipedia.org/wiki/Adjacency_matrix), [incidence matrix](https://en.wikipedia.org/wiki/Incidence_matrix), [adjacency list](https://en.wikipedia.org/wiki/Adjacency_list)
 - Deleting vertices (with all connected edges)
 - Depth/Breadth-first search visualization
-- Calculation graph operations ([sum](http://mathworld.wolfram.com/GraphSum.html), [intersection](http://mathworld.wolfram.com/GraphIntersection.html))
 
 ## Demo
 Check out demo in your browser:
-- [Depth/Breadth-first search visualization](https://kubk.github.io/graph-traversing-visualization/static/graph-traversing-animation.html)
+- [Depth/Breadth-first search visualization](https://kubk.github.io/graph-traversing-visualization/static/index.html)
 
 ## Control
-- Create vertex - Left mouse click on empty space
+- Create vertex - Left mouse click on an empty space
 - Drag vertex - Press and hold down left mouse button, then move drag vertex to the desired location
 - Connect vertices - Right mouse click on start/end vertex
 - Delete vertex - Ctrl+right mouse click
@@ -23,3 +22,8 @@ Check out demo in your browser:
 
 ## Example
 ![example](https://github.com/kubk/graph-traversing-visualization/blob/gh-pages/out.gif)
+
+## Testing
+```
+npm run test
+```

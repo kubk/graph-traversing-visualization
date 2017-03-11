@@ -22,14 +22,12 @@ UndirectedEdge.prototype = Object.create(Edge.prototype);
 
 /**
  * @param {Vertex} vertex
- * @returns {Vertex}
+ * @return {Vertex}
  */
 UndirectedEdge.prototype.getIncidentVertexTo = function (vertex) {
-    if (this._vertexA === vertex) {
-        return this._vertexB;
-    } else if (this._vertexB === vertex) {
-        return this._vertexA;
-    } else {
-        throw new Error('Invalid vertex: ' + vertex.getId());
+    switch (vertex) {
+        case this._vertexA: return this._vertexB;
+        case this._vertexB: return this._vertexA;
+        default: throw new Error('Invalid vertex: ' + vertex);
     }
 };

@@ -1,10 +1,10 @@
 {
   "name": "graphs",
   "version": "1.0.0",
-  "description": "Graph representation/manipulation/traversal visualization using vanilla JavaScript + Canvas API.",
+  "description": "Graph manipulation/traversing visualization using vanilla JavaScript + Canvas API.",
   "scripts": {
-    "watchify": "watchify ./src/app.js -o static/traversing-animation.js --debug -v",
-    "build-prod": "browserify ./src/app.js -o static/traversing-animation.js",
+    "watchify": "watchify ./src/app.js -o static/dist.js --debug -v",
+    "build-prod": "browserify ./src/app.js -o static/dist.js",
     "test": "mocha"
   },
   "devDependencies": {

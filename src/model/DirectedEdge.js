@@ -21,7 +21,7 @@ function DirectedEdge(fromVertex, toVertex) {
 DirectedEdge.prototype = Object.create(Edge.prototype);
 
 /**
- * @returns {Vertex}
+ * @return {Vertex}
  */
 DirectedEdge.prototype.getFromVertex = function () {
     return this._fromVertex;
@@ -29,14 +29,12 @@ DirectedEdge.prototype.getFromVertex = function () {
 
 /**
  * @param {Vertex} vertex
- * @returns {Vertex}
+ * @return {Vertex}
  */
 DirectedEdge.prototype.getIncidentVertexTo = function (vertex) {
-    if (this._fromVertex === vertex) {
-        return this._toVertex;
-    } else if (this._toVertex === vertex) {
-        return this._fromVertex;
-    } else {
-        throw new Error('Invalid vertex: ' + vertex);
+    switch (vertex) {
+        case this._fromVertex: return this._toVertex;
+        case this._toVertex: return this._fromVertex;
+        default: throw new Error('Invalid vertex: ' + vertex)
     }
 };

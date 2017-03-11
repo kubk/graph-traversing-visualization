@@ -9,15 +9,10 @@ var DirectedEdge = require('./model/DirectedEdge');
  * @constructor
  */
 function CanvasHelper(canvas) {
-    if (!canvas.getContext) {
-        throw new TypeError('Canvas not supported in your browser');
-    }
-
     this._context = canvas.getContext('2d');
     this._width = canvas.width;
     this._height = canvas.height;
     this._fontSize = 13;
-    // Divide curve/line in ratio (for edge direction)
     this._ratio = 0.5;
     this._arrowLength = 20;
 }
@@ -43,11 +38,6 @@ CanvasHelper.prototype.drawLine = function (isDirected, fromPosition, toPosition
     if (strokeStyle) {
         this._context.strokeStyle = strokeStyle;
     }
-    if (![fromPosition, toPosition].every(function (object) {
-            return object instanceof Position;
-        })) {
-        throw new TypeError('Positions must be of type Position');
-    }
 
     this._context.beginPath();
     this._context.moveTo(fromPosition.getX(), fromPosition.getY());
@@ -62,12 +52,13 @@ CanvasHelper.prototype.drawLine = function (isDirected, fromPosition, toPosition
 };
 
 /**
- * Calculates position of point, that divides the line in a given ratio
+ * Calculates position of the point, that divides the line in a given ratio
  *
  * @param {number} ratio
  * @param {Position} fromPosition
  * @param {Position} toPosition
- * @returns {Position}
+ * @return {Position}
+ * @private
  */
 CanvasHelper.prototype._getPositionDividedInRatio = function (ratio, fromPosition, toPosition) {
     return new Position(
@@ -83,16 +74,6 @@ CanvasHelper.prototype._getPositionDividedInRatio = function (ratio, fromPositio
  * @param {*} [color]
  */
 CanvasHelper.prototype.drawCircle = function (position, radius, textInside, color) {
-    if (!textInside) {
-        throw new Error('Text inside circle is not specified');
-    }
-    if (!Number.isInteger(radius)) {
-        throw new TypeError('Radius must be an integer');
-    }
-    if (!(position instanceof Position)) {
-        throw new TypeError('Position must be of type Position')
-    }
-
     this._context.beginPath();
     this._context.arc(position.getX(), position.getY(), radius, 0, Math.PI * 2);
     this._context.fillStyle = color || "#00f";
@@ -141,7 +122,8 @@ CanvasHelper.prototype.drawEdges = function (edges) {
  * @param {number} p0
  * @param {number} p1
  * @param {number} p2
- * @returns {number}
+ * @return {number}
+ * @private
  */
 CanvasHelper.prototype._getQuadraticCurveCoord = function (t, p0, p1, p2) {
     if (t < 0 || t > 1) {
@@ -156,6 +138,7 @@ CanvasHelper.prototype._getQuadraticCurveCoord = function (t, p0, p1, p2) {
  * @param {Position} fromPosition
  * @param {Position} toPosition
  * @param {Position} arrowStartPosition
+ * @private
  */
 CanvasHelper.prototype._drawArrow = function (fromPosition, toPosition, arrowStartPosition) {
     var fromX = fromPosition.getX();
@@ -184,7 +167,8 @@ CanvasHelper.prototype._drawArrow = function (fromPosition, toPosition, arrowSta
 
 /**
  * @param {number} edgesCount
- * @returns {Function} - Callback that generates shift for the next parallel edge
+ * @return {Function} - Callback that generates shift for the next parallel edge
+ * @private
  */
 CanvasHelper.prototype._getShiftGenerator = function (edgesCount) {
     if (edgesCount < 1) {

@@ -6,20 +6,17 @@ var DirectedEdge = require('./../model/DirectedEdge');
 
 /**
  * @param {Graph} graph
- * @param {boolean} [isStatic]
  * @constructor
  */
-function GraphHtmlTableView(graph, isStatic) {
-    if (!(graph instanceof Graph)) {
-        throw new TypeError('Argument must be of type Graph');
-    }
+function GraphHtmlTableView(graph) {
     this._graph = graph;
-    if (!isStatic) {
-        this.setUpEventListeners();
-    }
+    this._setUpEventListeners();
 }
 
-GraphHtmlTableView.prototype.setUpEventListeners = function () {
+/**
+ * @private
+ */
+GraphHtmlTableView.prototype._setUpEventListeners = function () {
     this._graph.on(Graph.EVENT_VERTEX_CREATED,
         this.rebuildAdjacencyListAction.bind(this),
         this.rebuildAdjacencyMatrixAction.bind(this),
@@ -63,7 +60,8 @@ GraphHtmlTableView.prototype.rebuildDegreesTable = function () {
 
 /**
  * @param {Vertex[]} verticesList
- * @returns {string}
+ * @return {string}
+ * @private
  */
 GraphHtmlTableView.prototype._buildAdjacencyListHtml = function (verticesList) {
     if (!verticesList.length) {
@@ -85,7 +83,8 @@ GraphHtmlTableView.prototype._buildAdjacencyListHtml = function (verticesList) {
 
 /**
  * @param {Vertex[]} verticesList
- * @returns {Array}
+ * @return {Array}
+ * @private
  */
 GraphHtmlTableView.prototype._verticesListToAdjacencyMatrix = function (verticesList) {
     return verticesList.map(function (vertex) {
@@ -99,8 +98,9 @@ GraphHtmlTableView.prototype._verticesListToAdjacencyMatrix = function (vertices
 
 /**
  * @param {Array} adjacencyMatrix
- * @param {Vertex} verticesList
- * @returns {string}
+ * @param {Array<Vertex>} verticesList
+ * @return {string}
+ * @private
  */
 GraphHtmlTableView.prototype._adjacencyMatrixToHtmlTable = function (adjacencyMatrix, verticesList) {
     if (!verticesList.length) {
@@ -125,7 +125,7 @@ GraphHtmlTableView.prototype._adjacencyMatrixToHtmlTable = function (adjacencyMa
 /**
  * @param {Edge[]} edgesList
  * @param {Vertex[]} verticesList
- * @returns {Array}
+ * @return {Array}
  */
 GraphHtmlTableView.prototype._edgesListToIncidenceMatrix = function (edgesList, verticesList) {
     var incidenceMatrix = this._createEmpty2dArray(verticesList.length, edgesList.length);
@@ -148,7 +148,8 @@ GraphHtmlTableView.prototype._edgesListToIncidenceMatrix = function (edgesList, 
 /**
  * @param {number} rows
  * @param {number} rowLength
- * @returns {Array}
+ * @return {Array}
+ * @private
  */
 GraphHtmlTableView.prototype._createEmpty2dArray = function (rows, rowLength) {
     var array = [];
@@ -164,7 +165,8 @@ GraphHtmlTableView.prototype._createEmpty2dArray = function (rows, rowLength) {
 
 /**
  * @param {Array} incidenceMatrix
- * @returns {string}
+ * @return {string}
+ * @private
  */
 GraphHtmlTableView.prototype._incidenceMatrixToHtmlTable = function (incidenceMatrix) {
     if (!incidenceMatrix.length || incidenceMatrix.every(function (row) {
@@ -183,7 +185,8 @@ GraphHtmlTableView.prototype._incidenceMatrixToHtmlTable = function (incidenceMa
 
 /**
  * @param {Graph} graph
- * @returns {string}
+ * @return {string}
+ * @private
  */
 GraphHtmlTableView.prototype._buildDegreesTable = function (graph) {
     var result = "<table><tr><th></th><th>inDegree</th><th>outDegree</th></tr>";

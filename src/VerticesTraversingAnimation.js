@@ -1,7 +1,6 @@
 "use strict";
 
 module.exports = VerticesTraversingAnimation;
-var GraphCanvasView = require('./view/GraphCanvasView');
 
 /**
  * @param {GraphCanvasView} graphCanvasView
@@ -10,10 +9,6 @@ var GraphCanvasView = require('./view/GraphCanvasView');
  * @constructor
  */
 function VerticesTraversingAnimation(graphCanvasView, animationStartButton, dfsRadioButton) {
-    if (!(graphCanvasView instanceof GraphCanvasView)) {
-        throw new TypeError('Argument must be of type GraphCanvasView');
-    }
-    
     this._graphCanvasView = graphCanvasView;
     this._canvasHelper = graphCanvasView.getCanvasHelper();
     this._animationStartButton = animationStartButton;
@@ -77,6 +72,7 @@ VerticesTraversingAnimation.prototype.breadthFirstSearch = function (vertex) {
 
 /**
  * @param {Vertex[]} visitedVertices
+ * @private
  */
 VerticesTraversingAnimation.prototype._animateVisited = function (visitedVertices) {
     var currentVertex = visitedVertices.shift();

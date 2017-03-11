@@ -1,7 +1,6 @@
 "use strict";
 
 module.exports = Vertex;
-var Edge = require('./Edge');
 var DirectedEdge = require('./DirectedEdge');
 var UndirectedEdge = require('./UndirectedEdge');
 var Position = require('./Position');
@@ -30,14 +29,11 @@ Vertex.prototype.getPosition = function () {
  * @param {Position} position
  */
 Vertex.prototype.setPosition = function (position) {
-    if (!(position instanceof Position)) {
-        throw new TypeError('Argument must be of type Position');
-    }
     this._position = position;
 };
 
 /**
- * @returns {string|number}
+ * @return {string|number}
  */
 Vertex.prototype.getId = function () {
     return this._id;
@@ -51,39 +47,37 @@ Vertex.prototype.filterEdges = function (callback) {
 };
 
 /**
+ * @return {Array<Edge>}
+ */
+Vertex.prototype.getEdges = function () {
+    return this._edges;
+};
+
+/**
  * @param {Edge} edge
  */
 Vertex.prototype.addEdge = function (edge) {
-    if (!(edge instanceof Edge)) {
-        throw new TypeError('Argument must be of type Edge');
-    }
     this._edges.push(edge);
 };
 
 /**
  * @param {Vertex} vertex
- * @returns {DirectedEdge}
+ * @return {DirectedEdge}
  */
 Vertex.prototype.createDirectedEdgeTo = function (vertex) {
-    if (!(vertex instanceof Vertex)) {
-        throw new TypeError('Argument must be of type Vertex');
-    }
     return new DirectedEdge(this, vertex);
 };
 
 /**
  * @param {Vertex} vertex
- * @returns {UndirectedEdge}
+ * @return {UndirectedEdge}
  */
 Vertex.prototype.createUndirectedEdgeTo = function (vertex) {
-    if (!(vertex instanceof Vertex)) {
-        throw new TypeError('Argument must be of type Vertex');
-    }
     return new UndirectedEdge(this, vertex);
 };
 
 /**
- * @returns {Vertex[]}
+ * @return {Vertex[]}
  */
 Vertex.prototype.getIncidentVertices = function () {
     var incidentVertices = [];
@@ -97,7 +91,7 @@ Vertex.prototype.getIncidentVertices = function () {
 };
 
 /**
- * @returns {number}
+ * @return {number}
  */
 Vertex.prototype.getInDegree = function () {
     var that = this;
@@ -109,7 +103,7 @@ Vertex.prototype.getInDegree = function () {
 };
 
 /**
- * @returns {number}
+ * @return {number}
  */
 Vertex.prototype.getOutDegree = function () {
     var that = this;
