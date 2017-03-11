@@ -80,14 +80,13 @@ Vertex.prototype.createUndirectedEdgeTo = function (vertex) {
  * @return {Vertex[]}
  */
 Vertex.prototype.getIncidentVertices = function () {
-    var incidentVertices = [];
     var that = this;
-    this._edges.forEach(function (edge) {
+    return this._edges.reduce(function (incidentVertices, edge) {
         if (edge instanceof UndirectedEdge || edge.getFromVertex() === that) {
-            incidentVertices.push(edge.getIncidentVertexTo(that));
+            return incidentVertices.concat(edge.getIncidentVertexTo(that));
         }
-    });
-    return incidentVertices;
+        return incidentVertices;
+    }, []);
 };
 
 /**
@@ -106,10 +105,5 @@ Vertex.prototype.getInDegree = function () {
  * @return {number}
  */
 Vertex.prototype.getOutDegree = function () {
-    var that = this;
-    return this._edges.reduce(function (outDegree, edge) {
-        return (edge instanceof UndirectedEdge || edge.getFromVertex() === that)
-            ? outDegree + 1
-            : outDegree;
-    }, 0);
+    return this.getIncidentVertices().length;
 };
