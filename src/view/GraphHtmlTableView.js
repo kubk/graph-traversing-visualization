@@ -6,10 +6,13 @@ var DirectedEdge = require('./../model/DirectedEdge');
 
 /**
  * @param {Graph} graph
+ * @param {GraphConverter} graphConverter
  * @constructor
  */
-function GraphHtmlTableView(graph) {
+function GraphHtmlTableView(graph, graphConverter) {
     this._graph = graph;
+    this._edgesListToIncidenceMatrix = graphConverter.edgesListToIncidenceMatrix;
+    this._verticesListToAdjacencyMatrix = graphConverter.verticesListToAdjacencyMatrix;
     this._setUpEventListeners();
 }
 
@@ -81,20 +84,6 @@ GraphHtmlTableView.prototype._buildAdjacencyListHtml = function (verticesList) {
     return resultHtml + "</table>";
 };
 
-/**
- * @param {Vertex[]} verticesList
- * @return {Array}
- * @private
- */
-GraphHtmlTableView.prototype._verticesListToAdjacencyMatrix = function (verticesList) {
-    return verticesList.map(function (vertex) {
-        return verticesList.map(function (vertexInRow) {
-            return vertex.getIncidentVertices().filter(function (vertex) {
-                return vertex === vertexInRow;
-            }).length;
-        });
-    });
-};
 
 /**
  * @param {Array} adjacencyMatrix
@@ -120,29 +109,6 @@ GraphHtmlTableView.prototype._adjacencyMatrixToHtmlTable = function (adjacencyMa
             + "</tr>";
     }).join('');
     return resultHtml + "</table>";
-};
-
-/**
- * @param {Edge[]} edgesList
- * @param {Vertex[]} verticesList
- * @return {Array}
- */
-GraphHtmlTableView.prototype._edgesListToIncidenceMatrix = function (edgesList, verticesList) {
-    var incidenceMatrix = this._createEmpty2dArray(verticesList.length, edgesList.length);
-    var FROM_VERTEX = -1;
-    var TO_VERTEX = 1;
-
-    var columnCounter = 0;
-    for (var i = 0; i < edgesList.length; i++) {
-        var edge = edgesList[i];
-        var fromIndex = verticesList.indexOf(edge.getVertices()[0]);
-        var toIndex = verticesList.indexOf(edge.getVertices()[1]);
-        var fromValue = (edge instanceof DirectedEdge) ? FROM_VERTEX : TO_VERTEX;
-        var toValue = TO_VERTEX;
-        incidenceMatrix[fromIndex][columnCounter] = fromValue;
-        incidenceMatrix[toIndex][columnCounter++] = toValue;
-    }
-    return incidenceMatrix;
 };
 
 /**
