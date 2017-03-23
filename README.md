@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/kubk/graph-traversing-visualization.svg?branch=gh-pages)](https://travis-ci.org/kubk/graph-traversing-visualization)
-# kubk/graph-traversing-visualization
+# kubk/graph-traversing-visualization [![Build Status](https://travis-ci.org/kubk/graph-traversing-visualization.svg?branch=gh-pages)](https://travis-ci.org/kubk/graph-traversing-visualization)
 
 Graph manipulation/traversing visualization using vanilla JavaScript + Canvas API.
 
