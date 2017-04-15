@@ -19,15 +19,3 @@ function UndirectedEdge(vertexA, vertexB) {
 }
 
 UndirectedEdge.prototype = Object.create(Edge.prototype);
-
-/**
- * @param {Vertex} vertex
- * @return {Vertex}
- */
-UndirectedEdge.prototype.getIncidentVertexTo = function (vertex) {
-    switch (vertex) {
-        case this._vertexA: return this._vertexB;
-        case this._vertexB: return this._vertexA;
-        default: throw new Error('Invalid vertex: ' + vertex);
-    }
-};

@@ -9,7 +9,7 @@ var Position = require('./Position');
  * Represents a vertex: https://en.wikipedia.org/wiki/Vertex_(graph_theory)
  *
  * @param {string|number} id
- * @param {Position} [position]
+ * @param {Position} position
  * @constructor
  */
 function Vertex(id, position) {

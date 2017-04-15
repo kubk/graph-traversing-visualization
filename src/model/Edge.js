@@ -29,6 +29,14 @@ Edge.prototype.containsVertex = function (vertex) {
     return this._vertices.indexOf(vertex) !== -1;
 };
 
-Edge.prototype.getIncidentVertexTo = function () {
-    throw new Error('Method declared as abstract and must be overridden');
+/**
+ * @param {Vertex} vertex
+ * @return {Vertex}
+ */
+Edge.prototype.getIncidentVertexTo = function (vertex) {
+    switch (vertex) {
+        case this._vertices[0]: return this._vertices[1];
+        case this._vertices[1]: return this._vertices[0];
+        default: throw new Error('Invalid vertex: ' + vertex);
+    }
 };

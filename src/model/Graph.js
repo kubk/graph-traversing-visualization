@@ -6,9 +6,9 @@ var Edge = require('./Edge');
 var Vertex = require('./Vertex');
 
 /**
- * @param {Function} [generateVertexId]
- * @param {Vertex[]} [verticesList]
- * @param {Edge[]} [edgesList]
+ * @param {Function} generateVertexId
+ * @param {Vertex[]} verticesList
+ * @param {Edge[]} edgesList
  * @constructor
  */
 function Graph(generateVertexId, verticesList, edgesList) {
