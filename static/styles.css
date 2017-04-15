@@ -43,3 +43,8 @@ th,
 #adjacency-matrix-representation > table tr td:first-child {
     background-color: #ccc;
 }
+
+#search, #edge-type, #canvas {
+    display: block;
+    margin-bottom: 18px;
+}
