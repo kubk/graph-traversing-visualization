@@ -10,16 +10,17 @@ module.exports = {
  * @returns {Vertex[]}
  */
 function depthFirstSearch(vertex) {
-    var stack = [vertex],
+    const stack = [vertex],
         visited = [];
 
     while (stack.length) {
-        var current = stack.pop();
-        if (visited.indexOf(current) !== -1) {
+        const current = stack.pop();
+        if (visited.includes(current)) {
             continue;
         }
         visited.push(current);
-        current.getIncidentVertices().forEach(function (incident) {
+
+        current.getIncidentVertices().forEach((incident) => {
             stack.push(incident);
         });
     }
@@ -32,17 +33,16 @@ function depthFirstSearch(vertex) {
  * @returns {Vertex[]}
  */
 function breadthFirstSearch(vertex) {
-    var queue = [vertex],
-        visitedVertices = [],
-        currentVertex;
+    const queue = [vertex],
+        visitedVertices = [];
 
     do {
-        currentVertex = queue.shift();
-        if (visitedVertices.indexOf(currentVertex) !== -1) {
+        const currentVertex = queue.shift();
+        if (visitedVertices.includes(currentVertex)) {
             continue;
         }
         visitedVertices.push(currentVertex);
-        currentVertex.getIncidentVertices().forEach(function (nextVertex) {
+        currentVertex.getIncidentVertices().forEach((nextVertex) => {
             queue.push(nextVertex);
         });
     } while (queue.length);

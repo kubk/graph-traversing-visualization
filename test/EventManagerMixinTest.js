@@ -1,16 +1,16 @@
 'use strict';
 
-var assert = require('chai').assert;
-var EventManagerMixin = require('../src/model/EventManagerMixin');
-var sinon = require('sinon');
+const assert = require('chai').assert;
+const EventManagerMixin = require('../src/model/EventManagerMixin');
+const sinon = require('sinon');
 
-describe('EventManagerMixin', function () {
-    var behaveLikeEventManager = new function () {
+describe('EventManagerMixin', () => {
+    const behaveLikeEventManager = new function () {
         EventManagerMixin.call(this);
     };
 
-    it('calls handler when event is triggered', function () {
-        var handler = sinon.spy();
+    it('calls handler when event is triggered', () => {
+        const handler = sinon.spy();
         behaveLikeEventManager.on('foo', handler);
 
         assert.isTrue(handler.notCalled);
@@ -18,8 +18,8 @@ describe('EventManagerMixin', function () {
         assert.isTrue(handler.calledOnce);
     });
 
-    it('calls handler with arguments', function () {
-        var handler = sinon.spy();
+    it('calls handler with arguments', () => {
+        const handler = sinon.spy();
 
         behaveLikeEventManager.on('foo', handler);
         behaveLikeEventManager.trigger('foo', 1, 2, 3);
@@ -27,10 +27,10 @@ describe('EventManagerMixin', function () {
         assert.isTrue(handler.calledWith(1, 2, 3));
     });
 
-    it('calls multiple listeners', function () {
-        var handler = sinon.spy();
-        var handler2 = sinon.spy();
-        var handler3 = sinon.spy();
+    it('calls multiple listeners', () => {
+        const handler = sinon.spy();
+        const handler2 = sinon.spy();
+        const handler3 = sinon.spy();
 
         behaveLikeEventManager.on('foo', handler);
         behaveLikeEventManager.on('foo', handler2);
@@ -42,8 +42,8 @@ describe('EventManagerMixin', function () {
         assert.isTrue(handler3.calledOnce);
     });
 
-    it('always calls listeners', function () {
-        var handler = sinon.spy();
+    it('always calls listeners', () => {
+        const handler = sinon.spy();
 
         behaveLikeEventManager.on('foo', handler);
 

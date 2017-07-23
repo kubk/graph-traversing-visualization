@@ -1,18 +1,18 @@
 "use strict";
 
-var assert = require('chai').assert;
-var GraphConverter = require('../src/model/GraphConverter');
-var Graph = require('../src/model/Graph');
-var DirectedEdge = require('../src/model/DirectedEdge');
-var UndirectedEdge = require('../src/model/UndirectedEdge');
+const assert = require('chai').assert;
+const GraphConverter = require('../src/model/GraphConverter');
+const Graph = require('../src/model/Graph');
+const DirectedEdge = require('../src/model/DirectedEdge');
+const UndirectedEdge = require('../src/model/UndirectedEdge');
 
-describe('GraphConverter', function () {
-    var graphConverter = new GraphConverter();
-    var graph = new Graph();
-    var v1 = graph.createVertexWithPosition();
-    var v2 = graph.createVertexWithPosition();
-    var v3 = graph.createVertexWithPosition();
-    var v4 = graph.createVertexWithPosition();
+describe('GraphConverter', () => {
+    const graphConverter = new GraphConverter();
+    const graph = new Graph();
+    const v1 = graph.createVertexWithPosition();
+    const v2 = graph.createVertexWithPosition();
+    const v3 = graph.createVertexWithPosition();
+    const v4 = graph.createVertexWithPosition();
 
     /**
      *   4
@@ -28,7 +28,7 @@ describe('GraphConverter', function () {
     graph.addEdge(new UndirectedEdge(v4, v1));
     graph.addEdge(new UndirectedEdge(v4, v1));
 
-    it('converts graph to adjacency matrix', function () {
+    it('converts graph to adjacency matrix', () => {
         assert.deepEqual(
             [
         //       1  2  3  4
@@ -41,7 +41,7 @@ describe('GraphConverter', function () {
         )
     });
 
-    it('converts graph to incidence matrix', function () {
+    it('converts graph to incidence matrix', () => {
         assert.deepEqual(
             [
         /* 1 */ [-1, -1, 1, 1, 1],

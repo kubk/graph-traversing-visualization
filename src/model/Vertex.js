@@ -1,109 +1,110 @@
 "use strict";
 
-module.exports = Vertex;
-var DirectedEdge = require('./DirectedEdge');
-var UndirectedEdge = require('./UndirectedEdge');
-var Position = require('./Position');
+const DirectedEdge = require('./DirectedEdge');
+const UndirectedEdge = require('./UndirectedEdge');
+const Position = require('./Position');
 
 /**
  * Represents a vertex: https://en.wikipedia.org/wiki/Vertex_(graph_theory)
- *
- * @param {string|number} id
- * @param {Position} position
- * @constructor
  */
-function Vertex(id, position) {
-    this._id = id;
-    this._edges = [];
-    this._position = (position instanceof Position) ? position : null;
+class Vertex {
+    /**
+     * @param {string|number} id
+     * @param {Position} position
+     */
+    constructor(id, position) {
+        this.id = id;
+        this.edges = [];
+        this.position = (position instanceof Position) ? position : null;
+    }
+
+    /**
+     * @returns {Position|null}
+     */
+    getPosition() {
+        return this.position;
+    }
+
+    /**
+     * @param {Position} position
+     */
+    setPosition(position) {
+        this.position = position;
+    }
+
+    /**
+     * @return {string|number}
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * @param {Function} callback
+     */
+    filterEdges(callback) {
+        this.edges = this.edges.filter(callback);
+    }
+
+    /**
+     * @return {UndirectedEdge[]}
+     */
+    getEdges() {
+        return this.edges;
+    }
+
+    /**
+     * @param {UndirectedEdge} edge
+     */
+    addEdge(edge) {
+        this.edges.push(edge);
+    }
+
+    /**
+     * @param {Vertex} vertex
+     * @return {DirectedEdge}
+     */
+    createDirectedEdgeTo(vertex) {
+        return new DirectedEdge(this, vertex);
+    }
+
+    /**
+     * @param {Vertex} vertex
+     * @return {UndirectedEdge}
+     */
+    createUndirectedEdgeTo(vertex) {
+        return new UndirectedEdge(this, vertex);
+    }
+
+    /**
+     * @return {Vertex[]}
+     */
+    getIncidentVertices() {
+        return this.edges.reduce((incidentVertices, edge) => {
+            if (!(edge instanceof DirectedEdge) || edge.getFromVertex() === this) {
+                return incidentVertices.concat(edge.getIncidentVertexTo(this));
+            }
+            return incidentVertices;
+        }, []);
+    }
+
+    /**
+     * @return {number}
+     */
+    getInDegree() {
+        return this.edges.reduce((inDegree, edge) => {
+            return (!(edge instanceof DirectedEdge) || edge.getFromVertex() !== this)
+                ? inDegree + 1
+                : inDegree;
+        }, 0);
+    }
+
+    /**
+     * @return {number}
+     */
+    getOutDegree() {
+        return this.getIncidentVertices().length;
+    }
 }
 
-/**
- * @returns {Position|null}
- */
-Vertex.prototype.getPosition = function () {
-    return this._position;
-};
-
-/**
- * @param {Position} position
- */
-Vertex.prototype.setPosition = function (position) {
-    this._position = position;
-};
-
-/**
- * @return {string|number}
- */
-Vertex.prototype.getId = function () {
-    return this._id;
-};
-
-/**
- * @param {Function} callback
- */
-Vertex.prototype.filterEdges = function (callback) {
-    this._edges = this._edges.filter(callback);
-};
-
-/**
- * @return {Array<Edge>}
- */
-Vertex.prototype.getEdges = function () {
-    return this._edges;
-};
-
-/**
- * @param {Edge} edge
- */
-Vertex.prototype.addEdge = function (edge) {
-    this._edges.push(edge);
-};
-
-/**
- * @param {Vertex} vertex
- * @return {DirectedEdge}
- */
-Vertex.prototype.createDirectedEdgeTo = function (vertex) {
-    return new DirectedEdge(this, vertex);
-};
-
-/**
- * @param {Vertex} vertex
- * @return {UndirectedEdge}
- */
-Vertex.prototype.createUndirectedEdgeTo = function (vertex) {
-    return new UndirectedEdge(this, vertex);
-};
-
-/**
- * @return {Vertex[]}
- */
-Vertex.prototype.getIncidentVertices = function () {
-    var that = this;
-    return this._edges.reduce(function (incidentVertices, edge) {
-        if (edge instanceof UndirectedEdge || edge.getFromVertex() === that) {
-            return incidentVertices.concat(edge.getIncidentVertexTo(that));
-        }
-        return incidentVertices;
-    }, []);
-};
-
-/**
- * @return {number}
- */
-Vertex.prototype.getInDegree = function () {
-    var that = this;
-    return this._edges.reduce(function (inDegree, edge) {
-        return (edge instanceof UndirectedEdge || edge.getFromVertex() !== that)
-            ? inDegree + 1
-            : inDegree;
-    }, 0);
-};
-
-/**
- * @return {number}
- */
-Vertex.prototype.getOutDegree = function () {
-    return this.getIncidentVertices().length;
-};
+module.exports = Vertex;

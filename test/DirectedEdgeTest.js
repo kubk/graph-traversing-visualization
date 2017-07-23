@@ -1,30 +1,30 @@
 'use strict';
 
-var assert = require('assert');
-var DirectedEdge = require('../src/model/DirectedEdge');
+const assert = require('assert');
+const DirectedEdge = require('../src/model/DirectedEdge');
 
-describe('DirectedEdge', function () {
-    var fromVertex = {addEdge: function () {}};
-    var toVertex = {addEdge: function () {}};
+describe('DirectedEdge', () => {
+    const fromVertex = {addEdge() {}};
+    const toVertex = {addEdge() {}};
 
-    var directedEdge = new DirectedEdge(fromVertex, toVertex);
+    const directedEdge = new DirectedEdge(fromVertex, toVertex);
 
-    it('returns valid start vertex', function () {
+    it('returns valid start vertex', () => {
         assert.equal(directedEdge.getFromVertex(), fromVertex);
     });
 
-    it('returns correct incident vertex', function () {
+    it('returns correct incident vertex', () => {
         assert.equal(fromVertex, directedEdge.getIncidentVertexTo(toVertex));
         assert.equal(toVertex, directedEdge.getIncidentVertexTo(fromVertex));
     });
 
-    it('throws an exception if argument for getIncidentVertexTo was not added to the edge', function () {
-        assert.throws(function () {
+    it('throws an exception if argument for getIncidentVertexTo was not added to the edge', () => {
+        assert.throws(() => {
             directedEdge.getIncidentVertexTo('foo');
         });
     });
 
-    it('contains added vertex', function () {
+    it('contains added vertex', () => {
         assert.ok(directedEdge.containsVertex(fromVertex));
         assert.ok(directedEdge.containsVertex(toVertex));
     });

@@ -1,22 +1,22 @@
 'use strict';
 
-var assert = require('chai').assert;
-var sinon = require('sinon');
+const assert = require('chai').assert;
+const sinon = require('sinon');
 
-var Graph = require('../src/model/Graph');
-describe('Graph with vertices', function () {
-    it('deletes vertex with all connected edges', function () {
-        var graph = new Graph();
+const Graph = require('../src/model/Graph');
+describe('Graph with vertices', () => {
+    it('deletes vertex with all connected edges', () => {
+        const graph = new Graph();
 
-        var v1 = graph.createVertexWithPosition();
-        var v2 = graph.createVertexWithPosition();
-        var v3 = graph.createVertexWithPosition();
-        var v4 = graph.createVertexWithPosition();
-        var v5 = graph.createVertexWithPosition();
+        const v1 = graph.createVertexWithPosition();
+        const v2 = graph.createVertexWithPosition();
+        const v3 = graph.createVertexWithPosition();
+        const v4 = graph.createVertexWithPosition();
+        const v5 = graph.createVertexWithPosition();
 
         /**
-         *      5
-         *      |
+         *       5
+         *       |
          * 1 --> 2 --> 3 <-- 4
          * |     |
          *  \---/

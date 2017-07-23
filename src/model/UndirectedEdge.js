@@ -1,21 +1,46 @@
 "use strict";
 
-module.exports = UndirectedEdge;
-var Edge = require('./Edge');
-
 /**
  * Represents a two-way edge
- *
- * @param {Vertex} vertexA
- * @param {Vertex} vertexB
- * @constructor
  */
-function UndirectedEdge(vertexA, vertexB) {
-    Edge.call(this, vertexA, vertexB);
-    this._vertexA = vertexA;
-    this._vertexB = vertexB;
-    vertexA.addEdge(this);
-    vertexB.addEdge(this);
+class UndirectedEdge {
+    /**
+     * @param {Vertex} fromVertex
+     * @param {Vertex} toVertex
+     */
+    constructor(fromVertex, toVertex) {
+        this.fromVertex = fromVertex;
+        this.toVertex = toVertex;
+        fromVertex.addEdge(this);
+        toVertex.addEdge(this);
+    }
+
+    /**
+     * @return {Vertex[]}
+     */
+    getVertices() {
+        return [this.fromVertex, this.toVertex];
+    }
+
+    /**
+     * @param {Vertex} vertex
+     * @return {boolean}
+     */
+    containsVertex(vertex) {
+        return this.getVertices().includes(vertex);
+    }
+
+    /**
+     * @param {Vertex} vertex
+     * @return {Vertex}
+     */
+    getIncidentVertexTo(vertex) {
+        switch (vertex) {
+            case this.fromVertex: return this.toVertex;
+            case this.toVertex: return this.fromVertex;
+            default: throw new Error('Invalid vertex: ' + vertex);
+        }
+    }
 }
 
-UndirectedEdge.prototype = Object.create(Edge.prototype);
+module.exports = UndirectedEdge;

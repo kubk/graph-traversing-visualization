@@ -1,41 +1,35 @@
 "use strict";
 
-module.exports = EventManagerMixin;
-
-/**
- * Simple mixin for managing events
- *
- * @constructor
- */
 function EventManagerMixin() {
-    this._eventHandlers = {};
-    
+    this.eventHandlers = {};
+
     /**
      * @param {*} eventName
+     * @param handlers
      */
-    this.on = function (eventName) {
-        var handlers = [].slice.call(arguments, 1);
-        if (!this._eventHandlers[eventName]) {
-            this._eventHandlers[eventName] = [];
+    this.on = function (eventName, ...handlers) {
+        if (!this.eventHandlers[eventName]) {
+            this.eventHandlers[eventName] = [];
         }
-        var that = this;
-        handlers.forEach(function (handler) {
-            that._eventHandlers[eventName].push(handler);
+
+        handlers.forEach((handler) => {
+            this.eventHandlers[eventName].push(handler);
         });
     };
 
     /**
      * @param {*} eventName
-     * @return {boolean}
+     * @param handlerArguments
      */
-    this.trigger = function (eventName) {
-        if (!this._eventHandlers[eventName]) {
-            return false;
+    this.trigger = function (eventName, ...handlerArguments) {
+        if (!this.eventHandlers[eventName]) {
+            return;
         }
 
-        var handlerArguments = [].slice.call(arguments, 1);
-        this._eventHandlers[eventName].forEach(function (handler) {
+        this.eventHandlers[eventName].forEach((handler) => {
             handler.apply(this, handlerArguments);
         });
-    };
+    }
 }
+
+module.exports = EventManagerMixin;

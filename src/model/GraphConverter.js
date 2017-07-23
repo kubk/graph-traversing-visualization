@@ -1,14 +1,13 @@
 "use strict";
 
-module.exports = GraphConverter;
-var DirectedEdge = require('./DirectedEdge');
+const DirectedEdge = require('./DirectedEdge');
 
-function GraphConverter() {
+class GraphConverter {
     /**
      * @param {Graph} graph
      * @return {Array}
      */
-    this.toAdjacencyMatrix = function (graph) {
+    toAdjacencyMatrix(graph) {
         var vertices = graph.getVerticesList();
 
         return vertices.map(function (vertex) {
@@ -17,45 +16,46 @@ function GraphConverter() {
                     return vertex === vertexInRow;
                 }).length;
             });
-        });
-    };
+        })
+    }
 
     /**
      * @param {Graph} graph
      * @return {Array}
      */
-    this.toIncidenceMatrix = function (graph) {
-        var edges = graph.getEdgesList();
-        var vertices = graph.getVerticesList();
-        var incidenceMatrix = this._createEmpty2dArray(vertices.length, edges.length);
-        var FROM_VERTEX = -1;
-        var TO_VERTEX = 1;
+    toIncidenceMatrix(graph) {
+        const edges = graph.getEdgesList();
+        const vertices = graph.getVerticesList();
+        const incidenceMatrix = createEmpty2dArray(vertices.length, edges.length);
+        const FROM_VERTEX = -1;
+        const TO_VERTEX = 1;
 
-        var columnCounter = 0;
-        for (var i = 0; i < edges.length; i++) {
-            var edge = edges[i];
-            var fromIndex = vertices.indexOf(edge.getVertices()[0]);
-            var toIndex = vertices.indexOf(edge.getVertices()[1]);
-            var fromValue = (edge instanceof DirectedEdge) ? FROM_VERTEX : TO_VERTEX;
-            var toValue = TO_VERTEX;
+        let columnCounter = 0;
+        for (let i = 0; i < edges.length; i++) {
+            const edge = edges[i];
+            const fromIndex = vertices.indexOf(edge.getVertices()[0]);
+            const toIndex = vertices.indexOf(edge.getVertices()[1]);
+            const fromValue = (edge instanceof DirectedEdge) ? FROM_VERTEX : TO_VERTEX;
+            const toValue = TO_VERTEX;
             incidenceMatrix[fromIndex][columnCounter] = fromValue;
             incidenceMatrix[toIndex][columnCounter++] = toValue;
         }
 
         return incidenceMatrix;
     };
-
-    /**
-     * @param {number} rows
-     * @param {number} rowLength
-     * @return {Array}
-     * @private
-     */
-    this._createEmpty2dArray = function (rows, rowLength) {
-        var arr = new Array(rows);
-        for(var i = 0; i < arr.length; i++){
-            arr[i] = (new Array(rowLength)).fill(0);
-        }
-        return arr;
-    };
 }
+
+/**
+ * @param {number} rows
+ * @param {number} rowLength
+ * @return {Array}
+ */
+function createEmpty2dArray(rows, rowLength) {
+    const arr = new Array(rows);
+    for(let i = 0; i < arr.length; i++){
+        arr[i] = (new Array(rowLength)).fill(0);
+    }
+    return arr;
+}
+
+module.exports = GraphConverter;
