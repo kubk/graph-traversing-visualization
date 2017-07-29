@@ -8,13 +8,14 @@ class GraphConverter {
      * @return {Array}
      */
     toAdjacencyMatrix(graph) {
-        var vertices = graph.getVerticesList();
+        const vertices = graph.getVerticesList();
 
-        return vertices.map(function (vertex) {
-            return vertices.map(function (vertexInRow) {
-                return vertex.getIncidentVertices().filter(function (vertex) {
-                    return vertex === vertexInRow;
-                }).length;
+        return vertices.map((vertex) => {
+            return vertices.map((vertexInRow) => {
+                return vertex
+                    .getIncidentVertices()
+                    .filter(vertex => vertex === vertexInRow)
+                    .length;
             });
         })
     }

@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Graph manipulation/traversing visualization using vanilla JavaScript + Canvas API.",
   "scripts": {
-    "watchify": "watchify ./src/app.js -o static/dist.js --debug -v",
-    "build-prod": "browserify ./src/app.js -o static/dist.js",
+    "watchify": "watchify ./src/index.js -o static/dist.js --debug -v",
+    "build-prod": "browserify ./src/index.js -o static/dist.js",
     "test": "mocha"
   },
   "devDependencies": {

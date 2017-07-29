@@ -57,16 +57,16 @@ class GraphHtmlTableView {
 
     rebuildDegreesTable() {
         document.getElementById('degrees-representation')
-            .innerHTML = this.buildDegreesTable(this.graph);
+            .innerHTML = this.buildDegreesTable(this.graph.getVerticesList());
     }
 
     /**
-     * @param {Vertex[]} verticesList
+     * @param {Vertex[]} vertices
      * @return {string}
      * @private
      */
-    buildAdjacencyListHtml(verticesList) {
-        if (!verticesList.length) {
+    buildAdjacencyListHtml(vertices) {
+        if (!vertices.length) {
             return '';
         }
 
@@ -75,7 +75,7 @@ class GraphHtmlTableView {
                 <th>Vertex</th>
                 <th>Adjacent vertices</th>
             </tr>
-            {{#each verticesList}}
+            {{#each vertices}}
                 <tr>
                     <td>{{ getId }}</td>
                     <td>
@@ -89,26 +89,26 @@ class GraphHtmlTableView {
 
         const template = Handlebars.compile(source);
 
-        return template({verticesList});
+        return template({vertices});
     }
 
     /**
      * @param {Array} adjacencyMatrix
-     * @param {Vertex[]} verticesList
+     * @param {Vertex[]} vertices
      * @return {string}
      * @private
      */
-    adjacencyMatrixToHtmlTable(adjacencyMatrix, verticesList) {
-        if (!verticesList.length) {
+    adjacencyMatrixToHtmlTable(adjacencyMatrix, vertices) {
+        if (!vertices.length) {
             return '';
         }
 
-        const adjacencyTable = adjacencyMatrix.map((row, i) => [verticesList[i].id].concat(row));
+        const adjacencyTable = adjacencyMatrix.map((row, i) => [vertices[i].id].concat(row));
 
         const source = `<table>
             <tr>
                 <th></th>
-                {{#each verticesList}}
+                {{#each vertices}}
                     <th>{{ getId }}</th>
                 {{/each}}
             </tr>
@@ -124,7 +124,7 @@ class GraphHtmlTableView {
 
         const template = Handlebars.compile(source);
 
-        return template({verticesList, adjacencyTable});
+        return template({vertices, adjacencyTable});
     }
 
     /**
@@ -156,11 +156,11 @@ class GraphHtmlTableView {
     }
 
     /**
-     * @param {Graph} graph
+     * @param {Vertex[]} vertices
      * @return {string}
      * @private
      */
-    buildDegreesTable(graph) {
+    buildDegreesTable(vertices) {
         const source = `<table>
             <tr>
                 <th></th>
@@ -178,7 +178,7 @@ class GraphHtmlTableView {
 
         const template = Handlebars.compile(source);
 
-        return template({vertices: graph.getVerticesList()});
+        return template({vertices});
     }
 }
 

@@ -62,8 +62,8 @@ class GraphCanvasView {
 
     redraw() {
         this.canvasHelper.clearCanvas();
-        const splittedEdges = splitEdgesByVertices(this.graph.getEdgesList());
-        splittedEdges.forEach((edges) => this.canvasHelper.drawEdges(edges));
+        const groupedEdges = groupEdgesByVertices(this.graph.getEdgesList());
+        groupedEdges.forEach((edges) => this.canvasHelper.drawEdges(edges));
 
         this.graph.getVerticesList().forEach((vertex) => {
             const color = (vertex === this.selectedVertex) ? this.selectedVertexColor : null;
@@ -204,7 +204,7 @@ function checkPositionIsInCircle(position, circlePosition, circleRadius) {
  * @param {UndirectedEdge[]} edges
  * @return {Array}
  */
-function splitEdgesByVertices(edges) {
+function groupEdgesByVertices(edges) {
     const hashMap = [];
 
     edges.forEach(function (edge) {

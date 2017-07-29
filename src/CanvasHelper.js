@@ -51,7 +51,6 @@ class CanvasHelper {
      */
     drawDirectedLine(fromPosition, toPosition, lineWidth, strokeStyle) {
         this.drawUndirectedLine(fromPosition, toPosition, lineWidth, strokeStyle);
-        this.context.beginPath();
         const positionDivInRatio = getPositionDividedInRatio(this.ratio, fromPosition, toPosition);
         this.drawArrow(fromPosition, toPosition, positionDivInRatio);
     }
@@ -125,6 +124,7 @@ class CanvasHelper {
         const x = arrowStartPosition.getX();
         const y = arrowStartPosition.getY();
 
+        this.context.beginPath();
         this.context.moveTo(x, y);
         this.context.lineTo(
             x - this.arrowLength * Math.cos(angle - rotationAngle),
@@ -138,7 +138,6 @@ class CanvasHelper {
         this.context.stroke();
     }
 }
-
 
 /**
  * Calculates position of the point, that divides the line in a given ratio
