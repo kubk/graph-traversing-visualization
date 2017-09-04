@@ -50,10 +50,10 @@ describe('Vertex', () => {
         });
 
         it('calculates incident vertices', () => {
-            assert.sameMembers([v1], v4.getIncidentVertices());
-            assert.sameMembers([v4, v2, v3], v1.getIncidentVertices());
-            expect(v2.getIncidentVertices()).to.be.empty;
-            expect(v3.getIncidentVertices()).to.be.empty;
+            assert.sameMembers([v1], v4.getAdjacentVertices());
+            assert.sameMembers([v4, v2, v3], v1.getAdjacentVertices());
+            expect(v2.getAdjacentVertices()).to.be.empty;
+            expect(v3.getAdjacentVertices()).to.be.empty;
         });
     });
 });

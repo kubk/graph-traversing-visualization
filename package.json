@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Graph manipulation/traversing visualization using vanilla JavaScript + Canvas API.",
   "scripts": {
-	"test": "mocha"
+	  "test": "mocha"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

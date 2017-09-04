@@ -9,11 +9,12 @@ describe('DirectedEdge', () => {
 
     const directedEdge = new DirectedEdge(fromVertex, toVertex);
 
-    it('returns valid start vertex', () => {
-        assert.equal(directedEdge.getFromVertex(), fromVertex);
+    it('starts with fromVertex, ends with toVertex', () => {
+        assert.ok(directedEdge.startsWith(fromVertex));
+        assert.ok(directedEdge.endsWith(toVertex));
     });
 
-    it('returns correct incident vertex', () => {
+    it('returns correct adjacent vertex', () => {
         assert.equal(fromVertex, directedEdge.getIncidentVertexTo(toVertex));
         assert.equal(toVertex, directedEdge.getIncidentVertexTo(fromVertex));
     });

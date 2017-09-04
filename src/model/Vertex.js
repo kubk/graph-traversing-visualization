@@ -79,12 +79,11 @@ class Vertex {
     /**
      * @return {Vertex[]}
      */
-    getIncidentVertices() {
-        return this.edges.reduce((incidentVertices, edge) => {
-            if (!(edge instanceof DirectedEdge) || edge.getFromVertex() === this) {
-                return incidentVertices.concat(edge.getIncidentVertexTo(this));
-            }
-            return incidentVertices;
+    getAdjacentVertices() {
+        return this.edges.reduce((adjacent, edge) => {
+            return edge.startsWith(this)
+                ? adjacent.concat(edge.getIncidentVertexTo(this))
+                : adjacent;
         }, []);
     }
 
@@ -93,9 +92,7 @@ class Vertex {
      */
     getInDegree() {
         return this.edges.reduce((inDegree, edge) => {
-            return (!(edge instanceof DirectedEdge) || edge.getFromVertex() !== this)
-                ? inDegree + 1
-                : inDegree;
+            return edge.endsWith(this) ? inDegree + 1 : inDegree;
         }, 0);
     }
 
@@ -103,7 +100,7 @@ class Vertex {
      * @return {number}
      */
     getOutDegree() {
-        return this.getIncidentVertices().length;
+        return this.getAdjacentVertices().length;
     }
 }
 

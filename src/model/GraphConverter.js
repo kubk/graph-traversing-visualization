@@ -13,7 +13,7 @@ class GraphConverter {
         return vertices.map((vertex) => {
             return vertices.map((vertexInRow) => {
                 return vertex
-                    .getIncidentVertices()
+                    .getAdjacentVertices()
                     .filter(vertex => vertex === vertexInRow)
                     .length;
             });

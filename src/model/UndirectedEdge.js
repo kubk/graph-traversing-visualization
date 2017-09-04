@@ -41,6 +41,22 @@ class UndirectedEdge {
             default: throw new Error('Invalid vertex: ' + vertex);
         }
     }
+
+    /**
+     * @param {Vertex} vertex
+     * @return {bool}
+     */
+    startsWith(vertex) {
+        return this.containsVertex(vertex);
+    }
+
+    /**
+     * @param {Vertex} vertex
+     * @return {bool}
+     */
+    endsWith(vertex) {
+        return this.containsVertex(vertex);
+    }
 }
 
 module.exports = UndirectedEdge;

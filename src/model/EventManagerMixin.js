@@ -4,7 +4,7 @@ function EventManagerMixin() {
     this.eventHandlers = {};
 
     /**
-     * @param {*} eventName
+     * @param {string} eventName
      * @param handlers
      */
     this.on = function (eventName, ...handlers) {
@@ -12,13 +12,11 @@ function EventManagerMixin() {
             this.eventHandlers[eventName] = [];
         }
 
-        handlers.forEach((handler) => {
-            this.eventHandlers[eventName].push(handler);
-        });
+        this.eventHandlers[eventName].push(...handlers);
     };
 
     /**
-     * @param {*} eventName
+     * @param {string} eventName
      * @param handlerArguments
      */
     this.trigger = function (eventName, ...handlerArguments) {

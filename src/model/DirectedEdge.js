@@ -7,18 +7,19 @@ const UndirectedEdge = require('./UndirectedEdge');
  */
 class DirectedEdge extends UndirectedEdge {
     /**
-     * @param {Vertex} fromVertex
-     * @param {Vertex} toVertex
+     * @param {Vertex} vertex
+     * @return {bool}
      */
-    constructor(fromVertex, toVertex) {
-        super(fromVertex, toVertex);
+    startsWith(vertex) {
+    	return this.fromVertex === vertex;
     }
 
     /**
-     * @return {Vertex}
+     * @param {Vertex} vertex
+     * @return {bool}
      */
-    getFromVertex() {
-        return this.fromVertex;
+    endsWith(vertex) {
+    	return this.toVertex === vertex;
     }
 }
 

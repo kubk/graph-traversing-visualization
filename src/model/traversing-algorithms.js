@@ -11,21 +11,20 @@ module.exports = {
  */
 function depthFirstSearch(vertex) {
     const stack = [vertex],
-        visited = [];
+        visitedVertices = [];
 
     while (stack.length) {
-        const current = stack.pop();
-        if (visited.includes(current)) {
+        const currentVertex = stack.pop();
+        
+        if (visitedVertices.includes(currentVertex)) {
             continue;
         }
-        visited.push(current);
 
-        current.getIncidentVertices().forEach((incident) => {
-            stack.push(incident);
-        });
+        visitedVertices.push(currentVertex);
+        stack.push(...currentVertex.getAdjacentVertices());
     }
 
-    return visited;
+    return visitedVertices;
 }
 
 /**
@@ -36,16 +35,16 @@ function breadthFirstSearch(vertex) {
     const queue = [vertex],
         visitedVertices = [];
 
-    do {
+    while (queue.length) {
         const currentVertex = queue.shift();
+        
         if (visitedVertices.includes(currentVertex)) {
             continue;
         }
+        
         visitedVertices.push(currentVertex);
-        currentVertex.getIncidentVertices().forEach((nextVertex) => {
-            queue.push(nextVertex);
-        });
-    } while (queue.length);
+        queue.push(...currentVertex.getAdjacentVertices());
+    }
 
     return visitedVertices;
 }

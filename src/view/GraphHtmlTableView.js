@@ -79,7 +79,7 @@ class GraphHtmlTableView {
                 <tr>
                     <td>{{ getId }}</td>
                     <td>
-                        {{#each this.getIncidentVertices}}
+                        {{#each this.getAdjacentVertices}}
                             {{ getId }}{{#unless @last}},{{/unless}}
                         {{/each}}
                     </td>
