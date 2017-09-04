@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./bundle.js"></script>
+<body>
+
+<div id="search">
+    Search type:
+    <input type="radio" name="search" id="depth-first-search" checked="checked">
+    <label for="depth-first-search">Depth-first</label>
+    <input type="radio" name="search" id="breadth-first-search">
+    <label for="breadth-first-search">Breadth-first</label>
+    <button id="start-search">Run search</button>
+</div>
+
+<div id="edge-type">
+    Edge type:
+    <input type="radio" name="edge-type" id="directed-edge" checked="checked">
+    <label for="directed-edge">Directed</label>
+    <input type="radio" name="edge-type" id="undirected-edge">
+    <label for="undirected-edge">Undirected</label>
+</div>
+
+<canvas id="canvas" width=800 height=350>Canvas not supported in your browser</canvas>
+
+<div id="adjacency-matrix-representation"></div>
+<div id="adjacency-list-representation"></div>
+<div id="degrees-representation"></div>
+<div id="incidence-matrix-representation"></div>
