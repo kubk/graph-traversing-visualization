@@ -11,7 +11,7 @@ Graph manipulation/traversing visualization using vanilla JavaScript + Canvas AP
 
 ## Demo
 Check out demo in your browser:
-- [Depth/Breadth-first search visualization](https://kubk.github.io/graph-traversing-visualization/dist/index.html)
+- [Depth/Breadth-first search visualization](https://kubk.github.io/graph-traversing-visualization/dist)
 
 ## Control
 - Create vertex - Left mouse click on an empty space
