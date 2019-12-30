@@ -1,9 +1,5 @@
-'use strict';
-
-const assert = require('chai').assert;
-const breadFirstSearch = require('../src/model/traversing-algorithms').bfs;
-const depthFirstSearch = require('../src/model/traversing-algorithms').dfs;
-const Vertex = require('../src/model/Vertex');
+import { Vertex } from '../src/model/vertex';
+import { breadthFirstSearch, depthFirstSearch } from '../src/model/traversing-algorithms';
 
 describe('Traversing algorithms', () => {
   const v1 = new Vertex(1);
@@ -32,13 +28,13 @@ describe('Traversing algorithms', () => {
   v6.createUndirectedEdgeTo(v7);
 
   it('bfs', () => {
-    assert.deepEqual(breadFirstSearch(v2), [v2, v1, v3, v6, v4, v5, v7]);
-    assert.deepEqual(breadFirstSearch(v3), [v3, v2, v5, v1, v6, v4, v7]);
-    assert.deepEqual(breadFirstSearch(v5), [v5]);
+    expect(breadthFirstSearch(v2)).toStrictEqual([v2, v1, v3, v6, v4, v5, v7]);
+    expect(breadthFirstSearch(v3)).toStrictEqual([v3, v2, v5, v1, v6, v4, v7]);
+    expect(breadthFirstSearch(v5)).toStrictEqual([v5]);
   });
 
   it('dfs', () => {
-    assert.deepEqual(depthFirstSearch(v5), [v5]);
-    assert.deepEqual(depthFirstSearch(v2), [v2, v6, v7, v3, v5, v1, v4]);
+    expect(depthFirstSearch(v5)).toStrictEqual([v5]);
+    expect(depthFirstSearch(v2)).toStrictEqual([v2, v6, v7, v3, v5, v1, v4]);
   });
 });

@@ -1,11 +1,9 @@
-'use strict';
+import { Graph } from '../src/model/graph';
+import { UndirectedEdge } from '../src/model/undirected-edge';
+import { Vertex } from '../src/model/vertex';
 
-const assert = require('chai').assert;
-const Graph = require('../src/model/Graph');
-const sinon = require('sinon');
-
-describe('Graph', function() {
-  let graph;
+describe('Graph', () => {
+  let graph: Graph;
 
   beforeEach(() => {
     graph = new Graph();
@@ -13,31 +11,31 @@ describe('Graph', function() {
 
   it('contains added vertex', () => {
     const vertex = graph.createVertexWithPosition();
-    assert.isTrue(graph.containsVertex(vertex));
+    expect(graph.containsVertex(vertex)).toBeTruthy();
   });
 
   it('calls attached listeners', () => {
-    const vertexCreated = sinon.spy();
+    const vertexCreated = jest.fn();
     graph.on(Graph.EVENT_VERTEX_CREATED, vertexCreated);
     const vertex = graph.createVertexWithPosition();
-    assert.isTrue(vertexCreated.calledOnce);
+    expect(vertexCreated).toBeCalledTimes(1);
 
-    const vertexDeleted = sinon.spy();
+    const vertexDeleted = jest.fn();
     graph.on(Graph.EVENT_VERTEX_DELETED, vertexDeleted);
     graph.deleteVertex(vertex);
-    assert.isTrue(vertexDeleted.calledOnce);
+    expect(vertexDeleted).toBeCalledTimes(1);
 
-    const edgeAdded = sinon.spy();
+    const edgeAdded = jest.fn();
     graph.on(Graph.EVENT_EDGE_ADDED, edgeAdded);
-    graph.addEdge({});
-    assert.isTrue(edgeAdded.calledOnce);
+    graph.addEdge(new UndirectedEdge(new Vertex('1'), new Vertex('2')));
+    expect(edgeAdded).toBeCalledTimes(1);
   });
 
   it('deletes vertex', () => {
     const vertex = graph.createVertexWithPosition();
-    assert.isTrue(graph.containsVertex(vertex));
+    expect(graph.containsVertex(vertex)).toBeTruthy();
     graph.deleteVertex(vertex);
-    assert.isFalse(graph.containsVertex(vertex));
+    expect(graph.containsVertex(vertex)).toBeFalsy();
   });
 
   it('gives unique names for vertices', () => {
@@ -45,17 +43,15 @@ describe('Graph', function() {
     const vertex2 = graph.createVertexWithPosition();
     const vertex3 = graph.createVertexWithPosition();
 
-    assert.notEqual(vertex1.getId(), vertex2.getId());
-    assert.notEqual(vertex2.getId(), vertex3.getId());
-    assert.notEqual(vertex3.getId(), vertex1.getId());
+    expect(vertex1.getId()).not.toEqual(vertex2.getId());
+    expect(vertex2.getId()).not.toEqual(vertex3.getId());
+    expect(vertex3.getId()).not.toEqual(vertex1.getId());
   });
 
   it('allows to use custom name generators', () => {
-    const getGenerator = function() {
+    const getGenerator = () => {
       let counter = 1;
-      return function() {
-        return counter++;
-      };
+      return () => counter++;
     };
 
     graph = new Graph(getGenerator());
@@ -64,8 +60,8 @@ describe('Graph', function() {
     const vertex2 = graph.createVertexWithPosition();
     const vertex3 = graph.createVertexWithPosition();
 
-    assert.equal(1, vertex1.getId());
-    assert.equal(2, vertex2.getId());
-    assert.equal(3, vertex3.getId());
+    expect(1).toBe(vertex1.getId());
+    expect(2).toBe(vertex2.getId());
+    expect(3).toBe(vertex3.getId());
   });
 });
