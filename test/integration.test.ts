@@ -1,9 +1,5 @@
-'use strict';
+import { Graph } from '../src/model/graph';
 
-const assert = require('chai').assert;
-const sinon = require('sinon');
-
-const Graph = require('../src/model/Graph');
 describe('Graph with vertices', () => {
   it('deletes vertex with all connected edges', () => {
     const graph = new Graph();
@@ -32,10 +28,10 @@ describe('Graph with vertices', () => {
      * 1 3 <-- 4
      */
     graph.deleteVertex(v2);
-    assert.isFalse(graph.containsVertex(v2));
-    assert.lengthOf(v1.getEdges(), 0);
-    assert.lengthOf(v5.getEdges(), 0);
-    assert.lengthOf(v3.getEdges(), 1);
-    assert.lengthOf(v4.getEdges(), 1);
+    expect(graph.containsVertex(v2)).toBeFalsy();
+    expect(v1.getEdges()).toHaveLength(0);
+    expect(v5.getEdges()).toHaveLength(0);
+    expect(v3.getEdges()).toHaveLength(1);
+    expect(v4.getEdges()).toHaveLength(1);
   });
 });

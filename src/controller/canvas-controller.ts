@@ -1,35 +1,27 @@
-'use strict';
+import { Graph } from '../model/graph';
+import { CanvasRenderer } from '../view/canvas-renderer';
+import { Vertex } from '../model/vertex';
+import { Position } from '../model/position';
+import { UndirectedEdge } from '../model/undirected-edge';
 
-const CanvasHelper = require('../CanvasHelper');
-const Graph = require('../model/Graph');
-const Position = require('../model/Position');
+export class CanvasController {
+  canvasHelper = new CanvasRenderer(this.canvas);
+  private dragVertex: Vertex | null = null;
+  private selectedVertex: Vertex | null = null;
+  private uncompletedEdge: Position | null = null;
+  private readonly selectedVertexColor = '#0f0';
+  private readonly vertexRadius = 20;
 
-class GraphCanvasView {
-  /**
-   * @param {Graph} graph
-   * @param {HTMLCanvasElement} canvas
-   */
-  constructor(graph, canvas) {
-    this.graph = graph;
-    this.canvas = canvas;
-    this.canvasHelper = new CanvasHelper(canvas);
-    this.dragVertex = null;
-    this.uncompletedEdge = null;
-    this.selectedVertex = null;
+  constructor(private graph: Graph, private canvas: HTMLCanvasElement) {
     this.canvas.addEventListener('click', this.onClickListener.bind(this));
     this.canvas.addEventListener('contextmenu', this.onContextMenuListener.bind(this));
     this.canvas.addEventListener('mousemove', this.onMousemoveListener.bind(this));
     this.canvas.addEventListener('mouseup', this.onMouseupListener.bind(this));
     this.canvas.addEventListener('mousedown', this.onMousedownListener.bind(this));
     this.graph.on(Graph.EVENT_VERTEX_CREATED, this.drawVertex.bind(this));
-    this.selectedVertexColor = '#0f0';
-    this.vertexRadius = 20;
   }
 
-  /**
-   * @param {Vertex} vertex
-   */
-  setVertexAsSelected(vertex) {
+  setVertexAsSelected(vertex: Vertex): void {
     if (!this.graph.containsVertex(vertex)) {
       throw new Error('Attempt to select not added vertex');
     }
@@ -38,51 +30,41 @@ class GraphCanvasView {
     this.redraw();
   }
 
-  /**
-   * @return {Vertex|null}
-   */
-  getSelectedVertex() {
+  getSelectedVertex(): Vertex | null {
     return this.selectedVertex;
   }
 
-  discardSelectedVertex() {
+  discardSelectedVertex(): void {
     this.selectedVertex = null;
   }
 
-  /**
-   * @param {Position} position
-   * @return {Vertex|null}
-   * @private
-   */
-  getVertexByPosition(position) {
+  private getVertexByPosition(position: Position): Vertex | undefined {
     return this.graph.getVerticesList().find(vertex => {
-      return checkPositionIsInCircle(position, vertex.getPosition(), this.vertexRadius);
+      return checkPositionIsInCircle(position, vertex.getPosition()!, this.vertexRadius);
     });
   }
 
-  redraw() {
+  redraw(): void {
     this.canvasHelper.clearCanvas();
     const groupedEdges = groupEdgesByVertices(this.graph.getEdgesList());
     groupedEdges.forEach(edges => this.canvasHelper.drawEdges(edges));
 
     this.graph.getVerticesList().forEach(vertex => {
-      const color = vertex === this.selectedVertex ? this.selectedVertexColor : null;
-      this.canvasHelper.drawCircle(vertex.getPosition(), this.vertexRadius, vertex.getId(), color);
+      const color = vertex === this.selectedVertex ? this.selectedVertexColor : undefined;
+      this.canvasHelper.drawCircle(
+        vertex.getPosition()!,
+        this.vertexRadius,
+        vertex.getId().toString(),
+        color
+      );
     });
   }
 
-  /**
-   * @return {number}
-   */
-  getVertexRadius() {
+  getVertexRadius(): number {
     return this.vertexRadius;
   }
 
-  /**
-   * @param {Event} event
-   * @private
-   */
-  onClickListener(event) {
+  private onClickListener(event: MouseEvent): void {
     const clickPosition = this.getEventPosition(event);
     const vertex = this.getVertexByPosition(clickPosition);
 
@@ -93,11 +75,7 @@ class GraphCanvasView {
     }
   }
 
-  /**
-   * @param {Event} event
-   * @private
-   */
-  onContextMenuListener(event) {
+  private onContextMenuListener(event: MouseEvent): void {
     event.preventDefault();
     const clickPosition = this.getEventPosition(event);
     const vertex = this.getVertexByPosition(clickPosition);
@@ -106,8 +84,8 @@ class GraphCanvasView {
       this.graph.deleteVertex(vertex);
     } else if (vertex) {
       if (this.uncompletedEdge) {
-        const vertexFrom = this.getVertexByPosition(this.uncompletedEdge);
-        if (document.getElementById('directed-edge').checked) {
+        const vertexFrom = this.getVertexByPosition(this.uncompletedEdge)!;
+        if ((document.getElementById('directed-edge') as HTMLInputElement).checked) {
           this.graph.addEdge(vertexFrom.createDirectedEdgeTo(vertex));
         } else {
           this.graph.addEdge(vertexFrom.createUndirectedEdgeTo(vertex));
@@ -115,7 +93,7 @@ class GraphCanvasView {
         this.uncompletedEdge = null;
         this.redraw();
       } else if (vertex) {
-        this.uncompletedEdge = vertex.getPosition();
+        this.uncompletedEdge = vertex.getPosition() || null;
       }
     } else if (this.uncompletedEdge && !vertex) {
       this.uncompletedEdge = null;
@@ -123,16 +101,12 @@ class GraphCanvasView {
     }
   }
 
-  /**
-   * @param {Event} event
-   * @private
-   */
-  onMousemoveListener(event) {
+  private onMousemoveListener(event: MouseEvent): void {
     const mousePosition = this.getEventPosition(event);
 
     if (this.uncompletedEdge) {
       this.redraw();
-      const isEdgeDirected = document.getElementById('directed-edge').checked;
+      const isEdgeDirected = (document.getElementById('directed-edge') as HTMLInputElement).checked;
       if (isEdgeDirected) {
         this.canvasHelper.drawDirectedLine(this.uncompletedEdge, mousePosition);
       } else {
@@ -144,18 +118,14 @@ class GraphCanvasView {
     }
   }
 
-  onMouseupListener() {
+  onMouseupListener(): void {
     if (this.dragVertex) {
       this.dragVertex = null;
       this.redraw();
     }
   }
 
-  /**
-   * @param {Event} event
-   * @private
-   */
-  onMousedownListener(event) {
+  onMousedownListener(event: MouseEvent): any {
     const vertex = this.getVertexByPosition(this.getEventPosition(event));
 
     if (!vertex) {
@@ -165,36 +135,29 @@ class GraphCanvasView {
     this.dragVertex = vertex;
   }
 
-  /**
-   * @param {Event} event
-   * @return {Position}
-   * @private
-   */
-  getEventPosition(event) {
+  private getEventPosition(event: MouseEvent): Position {
     const boundingClientRect = this.canvas.getBoundingClientRect();
 
     return new Position(
-      parseInt(event.clientX - boundingClientRect.left),
-      parseInt(event.clientY - boundingClientRect.top)
+      parseInt((event.clientX - boundingClientRect.left).toString()),
+      parseInt((event.clientY - boundingClientRect.top).toString())
     );
   }
 
-  /**
-   * @param {Vertex} vertex
-   * @private
-   */
-  drawVertex(vertex) {
-    this.canvasHelper.drawCircle(vertex.getPosition(), this.vertexRadius, vertex.getId());
+  drawVertex(vertex: Vertex): void {
+    this.canvasHelper.drawCircle(
+      vertex.getPosition()!,
+      this.vertexRadius,
+      vertex.getId().toString()
+    );
   }
 }
 
-/**
- * @param {Position} position
- * @param {Position} circlePosition
- * @param {number} circleRadius
- * @return {boolean}
- */
-function checkPositionIsInCircle(position, circlePosition, circleRadius) {
+function checkPositionIsInCircle(
+  position: Position,
+  circlePosition: Position,
+  circleRadius: number
+): boolean {
   return (
     Math.pow(position.getX() - circlePosition.getX(), 2) +
       Math.pow(position.getY() - circlePosition.getY(), 2) <=
@@ -202,18 +165,13 @@ function checkPositionIsInCircle(position, circlePosition, circleRadius) {
   );
 }
 
-/**
- * @param {UndirectedEdge[]} edges
- * @return {Array}
- */
-function groupEdgesByVertices(edges) {
-  const hashMap = [];
+function groupEdgesByVertices(edges: UndirectedEdge[]): UndirectedEdge[][] {
+  const hashMap: { [key in string]: UndirectedEdge[] } = {};
 
   edges.forEach(function(edge) {
-    const getId = vertex => vertex.getId();
     const hash = edge
       .getVertices()
-      .map(getId)
+      .map((vertex: Vertex) => vertex.getId())
       .sort()
       .join('');
 
@@ -233,12 +191,6 @@ function groupEdgesByVertices(edges) {
   return withoutHash;
 }
 
-/**
- * @param {Event} event
- * @return {boolean}
- */
-function ctrlKeyIsPressed(event) {
+function ctrlKeyIsPressed(event: MouseEvent): boolean {
   return event.ctrlKey || event.metaKey;
 }
-
-module.exports = GraphCanvasView;
