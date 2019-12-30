@@ -1,32 +1,32 @@
-"use strict";
+'use strict';
 
 class Position {
-    constructor(x, y) {
-        this.setX(x);
-        this.setY(y);
-    }
+  constructor(x, y) {
+    this.setX(x);
+    this.setY(y);
+  }
 
-    setX(x) {
-        if (x < 0) {
-            throw new TypeError('Invalid argument');
-        }
-        this.x = x;
+  setX(x) {
+    if (x < 0) {
+      throw new TypeError('Invalid argument');
     }
+    this.x = x;
+  }
 
-    setY(y) {
-        if (y < 0) {
-            throw new TypeError('Invalid argument');
-        }
-        this.y = y;
+  setY(y) {
+    if (y < 0) {
+      throw new TypeError('Invalid argument');
     }
+    this.y = y;
+  }
 
-    getX() {
-        return this.x;
-    }
+  getX() {
+    return this.x;
+  }
 
-    getY() {
-        return this.y;
-    }
+  getY() {
+    return this.y;
+  }
 }
 
 module.exports = Position;

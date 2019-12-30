@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
 module.exports = {
-    bfs: breadthFirstSearch,
-    dfs: depthFirstSearch
+  bfs: breadthFirstSearch,
+  dfs: depthFirstSearch
 };
 
 /**
@@ -10,21 +10,21 @@ module.exports = {
  * @returns {Vertex[]}
  */
 function depthFirstSearch(vertex) {
-    const stack = [vertex],
-        visitedVertices = [];
+  const stack = [vertex],
+    visitedVertices = [];
 
-    while (stack.length) {
-        const currentVertex = stack.pop();
-        
-        if (visitedVertices.includes(currentVertex)) {
-            continue;
-        }
+  while (stack.length) {
+    const currentVertex = stack.pop();
 
-        visitedVertices.push(currentVertex);
-        stack.push(...currentVertex.getAdjacentVertices());
+    if (visitedVertices.includes(currentVertex)) {
+      continue;
     }
 
-    return visitedVertices;
+    visitedVertices.push(currentVertex);
+    stack.push(...currentVertex.getAdjacentVertices());
+  }
+
+  return visitedVertices;
 }
 
 /**
@@ -32,19 +32,19 @@ function depthFirstSearch(vertex) {
  * @returns {Vertex[]}
  */
 function breadthFirstSearch(vertex) {
-    const queue = [vertex],
-        visitedVertices = [];
+  const queue = [vertex],
+    visitedVertices = [];
 
-    while (queue.length) {
-        const currentVertex = queue.shift();
-        
-        if (visitedVertices.includes(currentVertex)) {
-            continue;
-        }
-        
-        visitedVertices.push(currentVertex);
-        queue.push(...currentVertex.getAdjacentVertices());
+  while (queue.length) {
+    const currentVertex = queue.shift();
+
+    if (visitedVertices.includes(currentVertex)) {
+      continue;
     }
 
-    return visitedVertices;
+    visitedVertices.push(currentVertex);
+    queue.push(...currentVertex.getAdjacentVertices());
+  }
+
+  return visitedVertices;
 }
