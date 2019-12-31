@@ -59,7 +59,7 @@ export class CanvasRenderer {
     this.context.fillStyle = color || '#00f';
     this.context.fill();
 
-    this.context.font = this.fontSize + 'pt Arial';
+    this.context.font = this.fontSize + 'pt Open Sans';
     this.context.fillStyle = '#fff';
     this.context.textAlign = 'center';
     this.context.fillText(textInside, position.getX(), position.getY() + this.fontSize / 2);

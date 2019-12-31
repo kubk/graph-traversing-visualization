@@ -1,0 +1,51 @@
+body {
+  background-color: #ccc;
+  font-family: Open Sans, 'sans-serif';
+}
+
+.canvas {
+  border: 1px solid #666;
+  background-color: #f3f3f3;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.settings-selector,
+.canvas {
+  display: block;
+  margin-bottom: 18px;
+}
+
+.graph-table {
+  margin-top: 5px;
+  border-collapse: collapse;
+
+  tr,
+  th,
+  td {
+    border: 1px solid black;
+    padding: 4px;
+  }
+}
+
+.graph-table-view {
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: top;
+
+  table {
+    background-color: #fff;
+  }
+
+  th, &.adjacency-matrix-representation tr td:first-child {
+    background-color: #ccc;
+  }
+}
+
+.search-algo-selector {
+  > button {
+    margin-left: 10px;
+  }
+}
