@@ -8,7 +8,7 @@ export class TemplateRenderer {
       return '';
     }
 
-    const source = `<table>
+    const source = `<table class="graph-table">
       <tr>
         <th>Vertex</th>
         <th>Adjacent vertices</th>
@@ -37,7 +37,7 @@ export class TemplateRenderer {
 
     const adjacencyTable = adjacencyMatrix.map((row, i) => [vertices[i].getId()].concat(row));
 
-    const source = `<table>
+    const source = `<table class="graph-table">
       <tr>
         <th></th>
         {{#each vertices}}
@@ -64,7 +64,7 @@ export class TemplateRenderer {
       return '';
     }
 
-    const source = `<table>
+    const source = `<table class="graph-table">
       <tr>
         <th colspan='100%'>Incidence Matrix</th>
       </tr>
@@ -83,7 +83,7 @@ export class TemplateRenderer {
   }
 
   renderDegreesTable(vertices: Vertex[]): string {
-    const source = `<table>
+    const source = `<table class="graph-table">
       <tr>
         <th></th>
         <th>In degree</th>

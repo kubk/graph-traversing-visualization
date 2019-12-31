@@ -3,6 +3,7 @@ import { HtmlTableController } from './controller/html-table-controller';
 import { CanvasController } from './controller/canvas-controller';
 import { TraversingAnimationController } from './controller/traversing-animation-controller';
 import { TemplateRenderer } from './view/template-renderer';
+import './scss/styles.scss';
 
 const graph = new Graph();
 const templateRenderer = new TemplateRenderer();

@@ -21,9 +21,8 @@ export class TraversingAnimationController extends EventEmitter {
   }
 
   setUpEventListeners() {
-    this.animationStartButton.addEventListener(
-      'click',
-      this.onAnimationButtonClick.bind(this, this.dfsButton.checked)
+    this.animationStartButton.addEventListener('click', () =>
+      this.onAnimationButtonClick(this.dfsButton.checked)
     );
   }
 
@@ -55,7 +54,7 @@ export class TraversingAnimationController extends EventEmitter {
         currentVertex.getId().toString(),
         this.visitedVertexColor
       );
-      setTimeout(() => this.animateVisited.bind(visitedVertices), this.vertexVisitDelay);
+      setTimeout(() => this.animateVisited(visitedVertices), this.vertexVisitDelay);
     } else {
       alert('Animation completed');
     }
