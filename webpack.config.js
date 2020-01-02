@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 
 module.exports = (env, { mode }) => {
   return {
@@ -10,13 +9,6 @@ module.exports = (env, { mode }) => {
     },
     module: {
       rules: [
-        {
-          test: /\.js$/,
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env']
-          }
-        },
         {
           test: /\.ts$/,
           exclude: [/node_modules/],
@@ -40,7 +32,6 @@ module.exports = (env, { mode }) => {
       compress: true,
       port: 9000
     },
-    devtool: mode === 'production' ? undefined : 'source-map',
-    plugins: mode === 'production' ? [] : [new webpack.SourceMapDevToolPlugin({})]
+    devtool: mode === 'production' ? undefined : 'source-map'
   };
 };
