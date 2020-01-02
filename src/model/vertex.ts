@@ -22,8 +22,8 @@ export class Vertex {
     return this.id;
   }
 
-  filterEdges(callback: (edge: UndirectedEdge) => boolean): void {
-    this.edges = this.edges.filter(callback);
+  removeEdges(callback: (edge: UndirectedEdge) => boolean): void {
+    this.edges = this.edges.filter(edge => !callback(edge));
   }
 
   getEdges(): UndirectedEdge[] {
@@ -32,14 +32,6 @@ export class Vertex {
 
   addEdge(edge: UndirectedEdge): void {
     this.edges.push(edge);
-  }
-
-  createDirectedEdgeTo(vertex: Vertex): DirectedEdge {
-    return new DirectedEdge(this, vertex);
-  }
-
-  createUndirectedEdgeTo(vertex: Vertex): UndirectedEdge {
-    return new UndirectedEdge(this, vertex);
   }
 
   getAdjacentVertices(): Vertex[] {

@@ -1,11 +1,13 @@
 import { Position } from '../model/position';
 import { DirectedEdge } from '../model/directed-edge';
 import { UndirectedEdge } from '../model/undirected-edge';
+import { getQuadraticCurveCoord } from './get-quadratic-curve-coordinate';
+import { createEdgeShiftGenerator } from './create-edge-shift-generator';
 
 export class CanvasRenderer {
   private context: CanvasRenderingContext2D;
-  private readonly width: number;
-  private readonly height: number;
+  private width: number;
+  private height: number;
   private fontSize = 13;
   private ratio = 0.5;
   private arrowLength = 20;
@@ -37,8 +39,8 @@ export class CanvasRenderer {
     }
 
     this.context.beginPath();
-    this.context.moveTo(fromPosition.getX(), fromPosition.getY());
-    this.context.lineTo(toPosition.getX(), toPosition.getY());
+    this.context.moveTo(fromPosition.x, fromPosition.y);
+    this.context.lineTo(toPosition.x, toPosition.y);
     this.context.stroke();
   }
 
@@ -49,31 +51,31 @@ export class CanvasRenderer {
     strokeStyle?: string
   ): void {
     this.drawUndirectedLine(fromPosition, toPosition, lineWidth, strokeStyle);
-    const positionDivInRatio = getPositionDividedInRatio(this.ratio, fromPosition, toPosition);
+    const positionDivInRatio = fromPosition.divideInRatio(this.ratio, toPosition);
     this.drawArrow(fromPosition, toPosition, positionDivInRatio);
   }
 
   drawCircle(position: Position, radius: number, textInside: string, color?: string): void {
     this.context.beginPath();
-    this.context.arc(position.getX(), position.getY(), radius, 0, Math.PI * 2);
+    this.context.arc(position.x, position.y, radius, 0, Math.PI * 2);
     this.context.fillStyle = color || '#00f';
     this.context.fill();
 
     this.context.font = this.fontSize + 'pt Open Sans';
     this.context.fillStyle = '#fff';
     this.context.textAlign = 'center';
-    this.context.fillText(textInside, position.getX(), position.getY() + this.fontSize / 2);
+    this.context.fillText(textInside, position.x, position.y + this.fontSize / 2);
   }
 
   drawEdges(edges: UndirectedEdge[]): void {
-    const generateShift = getShiftGenerator(edges.length);
+    const generateShift = createEdgeShiftGenerator(edges.length);
 
     edges.forEach(edge => {
       const vertices = edge.getVertices();
-      const fromX = vertices[0].getPosition()!.getX();
-      const fromY = vertices[0].getPosition()!.getY();
-      const toX = vertices[1].getPosition()!.getX();
-      const toY = vertices[1].getPosition()!.getY();
+      const fromX = vertices[0].getPosition()!.x;
+      const fromY = vertices[0].getPosition()!.y;
+      const toX = vertices[1].getPosition()!.x;
+      const toY = vertices[1].getPosition()!.y;
 
       this.context.beginPath();
       this.context.moveTo(fromX, fromY);
@@ -98,16 +100,15 @@ export class CanvasRenderer {
    * https://ru.wikipedia.org/wiki/%D0%9F%D0%BE%D0%B2%D0%BE%D1%80%D0%BE%D1%82#.D0.9F.D0.BE.D0.B2.D0.BE.D1.80.D0.BE.D1.82_.D0.B2_.D0.B4.D0.B2.D1.83.D0.BC.D0.B5.D1.80.D0.BD.D0.BE.D0.BC_.D0.BF.D1.80.D0.BE.D1.81.D1.82.D1.80.D0.B0.D0.BD.D1.81.D1.82.D0.B2.D0.B5
    */
   private drawArrow(fromPosition: Position, toPosition: Position, arrowStartPosition: Position) {
-    const fromX = fromPosition.getX();
-    const fromY = fromPosition.getY();
-    const toX = toPosition.getX();
-    const toY = toPosition.getY();
+    const fromX = fromPosition.x;
+    const fromY = fromPosition.y;
+    const toX = toPosition.x;
+    const toY = toPosition.y;
 
     const angle = Math.atan2(toY - fromY, toX - fromX);
     const rotationAngle = Math.PI / 6;
 
-    const x = arrowStartPosition.getX();
-    const y = arrowStartPosition.getY();
+    const { x, y } = arrowStartPosition;
 
     this.context.beginPath();
     this.context.moveTo(x, y);
@@ -122,51 +123,4 @@ export class CanvasRenderer {
     );
     this.context.stroke();
   }
-}
-
-/**
- * Calculates position of the point, that divides the line in a given ratio
- */
-function getPositionDividedInRatio(
-  ratio: number,
-  fromPosition: Position,
-  toPosition: Position
-): Position {
-  return new Position(
-    (fromPosition.getX() + ratio * toPosition.getX()) / (1 + ratio),
-    (fromPosition.getY() + ratio * toPosition.getY()) / (1 + ratio)
-  );
-}
-
-/**
- * https://ru.wikipedia.org/wiki/%D0%9A%D1%80%D0%B8%D0%B2%D0%B0%D1%8F_%D0%91%D0%B5%D0%B7%D1%8C%D0%B5#.D0.9A.D0.B2.D0.B0.D0.B4.D1.80.D0.B0.D1.82.D0.B8.D1.87.D0.BD.D1.8B.D0.B5_.D0.BA.D1.80.D0.B8.D0.B2.D1.8B.D0.B5
- */
-function getQuadraticCurveCoord(t: number, p0: number, p1: number, p2: number): number {
-  if (t < 0 || t > 1) {
-    throw new Error('Parameter t must be in range from 0 to 1');
-  }
-  return Math.pow(1 - t, 2) * p0 + 2 * (1 - t) * t * p1 + Math.pow(t, 2) * p2;
-}
-
-/**
- * @param {number} edgesCount
- * @return {Function} Callback that generates shift for the next parallel edge
- */
-function getShiftGenerator(edgesCount: number): Function {
-  if (edgesCount < 1) {
-    throw new Error('Edge count must be positive');
-  }
-
-  const distanceBetweenEdges = 50;
-  let shift = edgesCount % 2 === 0 ? distanceBetweenEdges : 0;
-
-  return () => {
-    const oldShift = shift;
-    if (shift > 0) {
-      shift *= -1;
-    } else {
-      shift = Math.abs(shift) + distanceBetweenEdges;
-    }
-    return oldShift;
-  };
 }

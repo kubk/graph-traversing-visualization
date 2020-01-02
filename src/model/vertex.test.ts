@@ -1,5 +1,6 @@
-import {Vertex} from "../src/model/vertex";
-import {UndirectedEdge} from "../src/model/undirected-edge";
+import { Vertex } from './vertex';
+import { UndirectedEdge } from './undirected-edge';
+import { DirectedEdge } from './directed-edge';
 
 describe('Vertex', () => {
   it('can filter edges in-place', () => {
@@ -11,7 +12,7 @@ describe('Vertex', () => {
     vertex.addEdge(new UndirectedEdge(v1, v2));
     vertex.addEdge(new UndirectedEdge(v3, v2));
 
-    vertex.filterEdges(edge => edge.startsWith(v3));
+    vertex.removeEdges(edge => !edge.startsWith(v3));
 
     expect(vertex.getEdges()).toHaveLength(1);
   });
@@ -28,9 +29,9 @@ describe('Vertex', () => {
      * 1 -> 2
      *  \-> 3
      */
-    v1.createDirectedEdgeTo(v2);
-    v1.createDirectedEdgeTo(v3);
-    v4.createUndirectedEdgeTo(v1);
+    new DirectedEdge(v1, v2);
+    new DirectedEdge(v1, v3);
+    new UndirectedEdge(v4, v1);
 
     it('calculates in-degree and out-degree', () => {
       expect(v1.getOutDegree()).toBe(3);

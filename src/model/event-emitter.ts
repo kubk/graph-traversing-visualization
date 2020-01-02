@@ -1,21 +1,19 @@
-export abstract class EventEmitter {
-  private eventHandlers: any = {};
+type Arguments<T> = T extends (...args: infer U) => any ? U : []
 
-  on(eventName: string, ...handlers: any) {
-    if (!this.eventHandlers[eventName]) {
-      this.eventHandlers[eventName] = [];
+export abstract class EventEmitter<Events> {
+  private handlers = new Map<keyof Events, Events[keyof Events][]>();
+
+  on(event: keyof Events, ...handlers: Array<Events[keyof Events]>): void {
+    if (this.handlers.has(event)) {
+      const newHandlers = (this.handlers.get(event) || []).concat(handlers);
+      this.handlers.set(event, newHandlers);
+    } else {
+      this.handlers.set(event, handlers);
     }
-
-    this.eventHandlers[eventName].push(...handlers);
   }
 
-  trigger(eventName: string, ...handlerArguments: any) {
-    if (!this.eventHandlers[eventName]) {
-      return;
-    }
-
-    this.eventHandlers[eventName].forEach((handler: any) => {
-      handler.apply(this, handlerArguments);
-    });
+  trigger(event: keyof Events, ...args: Arguments<Events[keyof Events]>): void {
+    const handlers: any[] = this.handlers.get(event) || [];
+    handlers.forEach(handler => handler(...args));
   }
 }

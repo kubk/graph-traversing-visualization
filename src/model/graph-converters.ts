@@ -17,10 +17,7 @@ export function toAdjacencyMatrix(graph: Graph): AdjacencyMatrix {
 export function toIncidenceMatrix(graph: Graph): IncidenceMatrix {
   const edges = graph.getEdgesList();
   const vertices = graph.getVerticesList();
-  const incidenceMatrix: Array<Array<-1 | 1 | 0>> = createEmpty2dArray(
-    vertices.length,
-    edges.length
-  );
+  const incidenceMatrix: Array<Array<-1 | 1 | 0>> = create2dArray(vertices.length, edges.length, 0);
   const FROM_VERTEX = -1;
   const TO_VERTEX = 1;
 
@@ -38,10 +35,10 @@ export function toIncidenceMatrix(graph: Graph): IncidenceMatrix {
   return incidenceMatrix;
 }
 
-function createEmpty2dArray(rows: number, rowLength: number): Array<Array<0>> {
+function create2dArray<T>(rows: number, rowLength: number, fill: T): Array<Array<T>> {
   const arr = new Array(rows);
   for (let i = 0; i < arr.length; i++) {
-    arr[i] = new Array(rowLength).fill(0);
+    arr[i] = new Array(rowLength).fill(fill);
   }
   return arr;
 }

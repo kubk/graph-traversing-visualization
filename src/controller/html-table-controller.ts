@@ -7,20 +7,20 @@ export class HtmlTableController {
 
   setUpEventListeners(): void {
     this.graph.on(
-      Graph.EVENT_VERTEX_CREATED,
+      'vertexCreated',
       this.rebuildAdjacencyListAction.bind(this),
       this.rebuildAdjacencyMatrixAction.bind(this),
       this.rebuildDegreesTable.bind(this)
     );
     this.graph.on(
-      Graph.EVENT_EDGE_ADDED,
+      'edgeAdded',
       this.rebuildIncidenceMatrixAction.bind(this),
       this.rebuildAdjacencyListAction.bind(this),
       this.rebuildAdjacencyMatrixAction.bind(this),
       this.rebuildDegreesTable.bind(this)
     );
     this.graph.on(
-      Graph.EVENT_VERTEX_DELETED,
+      'vertexDeleted',
       this.rebuildAdjacencyListAction.bind(this),
       this.rebuildAdjacencyMatrixAction.bind(this),
       this.rebuildIncidenceMatrixAction.bind(this),

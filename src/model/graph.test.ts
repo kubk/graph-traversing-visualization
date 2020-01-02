@@ -1,6 +1,7 @@
-import { Graph } from '../src/model/graph';
-import { UndirectedEdge } from '../src/model/undirected-edge';
-import { Vertex } from '../src/model/vertex';
+import { Graph } from './graph';
+import { UndirectedEdge } from './undirected-edge';
+import { Vertex } from './vertex';
+import { DirectedEdge } from './directed-edge';
 
 describe('Graph', () => {
   let graph: Graph;
@@ -16,17 +17,17 @@ describe('Graph', () => {
 
   it('calls attached listeners', () => {
     const vertexCreated = jest.fn();
-    graph.on(Graph.EVENT_VERTEX_CREATED, vertexCreated);
+    graph.on('vertexCreated', vertexCreated);
     const vertex = graph.createVertexWithPosition();
     expect(vertexCreated).toBeCalledTimes(1);
 
     const vertexDeleted = jest.fn();
-    graph.on(Graph.EVENT_VERTEX_DELETED, vertexDeleted);
+    graph.on('vertexDeleted', vertexDeleted);
     graph.deleteVertex(vertex);
     expect(vertexDeleted).toBeCalledTimes(1);
 
     const edgeAdded = jest.fn();
-    graph.on(Graph.EVENT_EDGE_ADDED, edgeAdded);
+    graph.on('edgeAdded', edgeAdded);
     graph.addEdge(new UndirectedEdge(new Vertex('1'), new Vertex('2')));
     expect(edgeAdded).toBeCalledTimes(1);
   });
@@ -63,5 +64,39 @@ describe('Graph', () => {
     expect(1).toBe(vertex1.getId());
     expect(2).toBe(vertex2.getId());
     expect(3).toBe(vertex3.getId());
+  });
+
+  it('deletes vertex with all connected edges', () => {
+    const graph = new Graph();
+
+    const v1 = graph.createVertexWithPosition();
+    const v2 = graph.createVertexWithPosition();
+    const v3 = graph.createVertexWithPosition();
+    const v4 = graph.createVertexWithPosition();
+    const v5 = graph.createVertexWithPosition();
+
+    /**
+     *       5
+     *       |
+     * 1 --> 2 --> 3 <-- 4
+     * |     |
+     *  \---/
+     */
+    graph.addEdge(new DirectedEdge(v1, v2));
+    graph.addEdge(new UndirectedEdge(v5, v2));
+    graph.addEdge(new DirectedEdge(v2, v3));
+    graph.addEdge(new DirectedEdge(v4, v3));
+    graph.addEdge(new UndirectedEdge(v1, v2));
+
+    /**
+     *   5
+     * 1 3 <-- 4
+     */
+    graph.deleteVertex(v2);
+    expect(graph.containsVertex(v2)).toBeFalsy();
+    expect(v1.getEdges()).toHaveLength(0);
+    expect(v5.getEdges()).toHaveLength(0);
+    expect(v3.getEdges()).toHaveLength(1);
+    expect(v4.getEdges()).toHaveLength(1);
   });
 });

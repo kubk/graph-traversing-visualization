@@ -1,8 +1,9 @@
-import { UndirectedEdge } from '../src/model/undirected-edge';
+import { UndirectedEdge } from './undirected-edge';
+import { Vertex } from './vertex';
 
 describe('DirectedEdge', () => {
-  const vertexA = { addEdge() {} } as any;
-  const vertexB = { addEdge() {} } as any;
+  const vertexA = new Vertex('1');
+  const vertexB = new Vertex('2');
 
   const undirectedEdge = new UndirectedEdge(vertexA, vertexB);
 

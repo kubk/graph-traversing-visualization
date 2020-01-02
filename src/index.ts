@@ -4,19 +4,20 @@ import { CanvasController } from './controller/canvas-controller';
 import { TraversingAnimationController } from './controller/traversing-animation-controller';
 import { TemplateRenderer } from './view/template-renderer';
 import './scss/styles.scss';
+import { CanvasRenderer } from './view/canvas-renderer';
 
 const graph = new Graph();
 const templateRenderer = new TemplateRenderer();
-const graphHtmlTableView = new HtmlTableController(graph, templateRenderer);
+const htmlTableController = new HtmlTableController(graph, templateRenderer);
 
 window.addEventListener('load', () => {
-  graphHtmlTableView.setUpEventListeners();
-  const graphCanvasView = new CanvasController(
-    graph,
-    document.getElementById('canvas') as HTMLCanvasElement
-  );
+  htmlTableController.setUpEventListeners();
+  const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+  const canvasRenderer = new CanvasRenderer(canvas);
+  const graphCanvasController = new CanvasController(graph, canvas, canvasRenderer);
   const verticesTraversingAnimation = new TraversingAnimationController(
-    graphCanvasView,
+    graphCanvasController,
+    canvasRenderer,
     document.getElementById('start-search') as HTMLButtonElement,
     document.getElementById('depth-first-search') as HTMLInputElement
   );

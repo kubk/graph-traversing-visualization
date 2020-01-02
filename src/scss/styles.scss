@@ -39,7 +39,8 @@ body {
     background-color: #fff;
   }
 
-  th, &.adjacency-matrix-representation tr td:first-child {
+  th,
+  &.adjacency-matrix-representation tr td:first-child {
     background-color: #ccc;
   }
 }

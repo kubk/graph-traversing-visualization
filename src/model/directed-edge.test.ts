@@ -1,8 +1,9 @@
-import { DirectedEdge } from '../src/model/directed-edge';
+import { DirectedEdge } from './directed-edge';
+import { Vertex } from './vertex';
 
 describe('DirectedEdge', () => {
-  const fromVertex = { addEdge() {} } as any;
-  const toVertex = { addEdge() {} } as any;
+  const fromVertex = new Vertex('1');
+  const toVertex = new Vertex('1');
 
   const directedEdge = new DirectedEdge(fromVertex, toVertex);
 

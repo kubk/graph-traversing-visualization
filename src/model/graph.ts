@@ -3,12 +3,19 @@ import { UndirectedEdge } from './undirected-edge';
 import { EventEmitter } from './event-emitter';
 import { Position } from './position';
 
-export class Graph extends EventEmitter {
-  private readonly generateVertexId: () => number | string;
+function createVertexIdGenerator(): () => string {
+  let current = 65;
+  return () => String.fromCharCode(current++);
+}
 
-  static EVENT_VERTEX_CREATED = 'vertexCreated';
-  static EVENT_VERTEX_DELETED = 'vertexDeleted';
-  static EVENT_EDGE_ADDED = 'edgeAdded';
+type GraphEvents = {
+  vertexCreated: (vertex: Vertex) => void;
+  vertexDeleted: () => void;
+  edgeAdded: () => void;
+};
+
+export class Graph extends EventEmitter<GraphEvents> {
+  private generateVertexId: () => number | string;
 
   constructor(
     generateVertexId?: () => number | string,
@@ -16,7 +23,7 @@ export class Graph extends EventEmitter {
     private edgesList: UndirectedEdge[] = []
   ) {
     super();
-    this.generateVertexId = generateVertexId || getVertexIdGenerator();
+    this.generateVertexId = generateVertexId || createVertexIdGenerator();
   }
 
   containsVertex(vertex: Vertex): boolean {
@@ -25,13 +32,13 @@ export class Graph extends EventEmitter {
 
   addEdge(edge: UndirectedEdge): void {
     this.edgesList.push(edge);
-    this.trigger(Graph.EVENT_EDGE_ADDED);
+    this.trigger('edgeAdded');
   }
 
   createVertexWithPosition(position?: Position): Vertex {
     const vertex = new Vertex(this.generateVertexId(), position);
     this.verticesList.push(vertex);
-    this.trigger(Graph.EVENT_VERTEX_CREATED, vertex);
+    this.trigger('vertexCreated', vertex);
     return vertex;
   }
 
@@ -44,22 +51,15 @@ export class Graph extends EventEmitter {
   }
 
   deleteVertex(vertex: Vertex): void {
-    const doesNotContainVertex = (edge: UndirectedEdge) => !edge.containsVertex(vertex);
-
     for (let i = 0; i < this.verticesList.length; i++) {
       const currentVertex = this.verticesList[i];
-      currentVertex.filterEdges(doesNotContainVertex);
+      currentVertex.removeEdges(edge => edge.containsVertex(vertex));
       if (currentVertex === vertex) {
         this.verticesList.splice(i--, 1);
-        this.edgesList = this.edgesList.filter(doesNotContainVertex);
+        this.edgesList = this.edgesList.filter(edge => !edge.containsVertex(vertex));
       }
     }
 
-    this.trigger(Graph.EVENT_VERTEX_DELETED);
+    this.trigger('vertexDeleted');
   }
-}
-
-function getVertexIdGenerator(): () => string {
-  let current = 65;
-  return () => String.fromCharCode(current++);
 }

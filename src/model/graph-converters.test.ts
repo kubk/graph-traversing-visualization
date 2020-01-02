@@ -1,7 +1,7 @@
-import { Graph } from '../src/model/graph';
-import { DirectedEdge } from '../src/model/directed-edge';
-import { UndirectedEdge } from '../src/model/undirected-edge';
-import { toAdjacencyMatrix, toIncidenceMatrix } from '../src/model/graph-converters';
+import { Graph } from './graph';
+import { DirectedEdge } from './directed-edge';
+import { UndirectedEdge } from './undirected-edge';
+import { toAdjacencyMatrix, toIncidenceMatrix } from './graph-converters';
 
 describe('GraphConverter', () => {
   const graph = new Graph();
