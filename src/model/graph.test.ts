@@ -44,9 +44,9 @@ describe('Graph', () => {
     const vertex2 = graph.createVertexWithPosition();
     const vertex3 = graph.createVertexWithPosition();
 
-    expect(vertex1.getId()).not.toEqual(vertex2.getId());
-    expect(vertex2.getId()).not.toEqual(vertex3.getId());
-    expect(vertex3.getId()).not.toEqual(vertex1.getId());
+    expect(vertex1.id).not.toEqual(vertex2.id);
+    expect(vertex2.id).not.toEqual(vertex3.id);
+    expect(vertex3.id).not.toEqual(vertex1.id);
   });
 
   it('allows to use custom name generators', () => {
@@ -61,9 +61,9 @@ describe('Graph', () => {
     const vertex2 = graph.createVertexWithPosition();
     const vertex3 = graph.createVertexWithPosition();
 
-    expect(1).toBe(vertex1.getId());
-    expect(2).toBe(vertex2.getId());
-    expect(3).toBe(vertex3.getId());
+    expect(1).toBe(vertex1.id);
+    expect(2).toBe(vertex2.id);
+    expect(3).toBe(vertex3.id);
   });
 
   it('deletes vertex with all connected edges', () => {

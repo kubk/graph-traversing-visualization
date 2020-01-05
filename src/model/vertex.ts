@@ -8,7 +8,7 @@ import { DirectedEdge } from './directed-edge';
 export class Vertex {
   private edges: UndirectedEdge[] = [];
 
-  constructor(private id: string | number, private position?: Position) {}
+  constructor(public readonly id: string | number, private position?: Position) {}
 
   getPosition(): Position | undefined {
     return this.position;
@@ -16,10 +16,6 @@ export class Vertex {
 
   setPosition(position: Position): void {
     this.position = position;
-  }
-
-  getId(): number | string {
-    return this.id;
   }
 
   removeEdges(callback: (edge: UndirectedEdge) => boolean): void {

@@ -1,4 +1,3 @@
-import Handlebars from 'handlebars';
 import { Vertex } from '../model/vertex';
 import { AdjacencyMatrix, IncidenceMatrix } from '../model/graph-converters';
 
@@ -8,26 +7,29 @@ export class TemplateRenderer {
       return '';
     }
 
-    const source = `<table class="graph-table">
+    return `<table class="graph-table">
+    <thead>
       <tr>
         <th>Vertex</th>
         <th>Adjacent vertices</th>
       </tr>
-      {{#each vertices}}
-        <tr>
-          <td>{{ getId }}</td>
+      </thead>
+      <tbody>
+      ${vertices
+        .map(
+          vertex => `<tr>
+          <td>${vertex.id}</td>
           <td>
-            {{#each this.getAdjacentVertices}}
-              {{ getId }}{{#unless @last}},{{/unless}}
-            {{/each}}
+            ${vertex
+              .getAdjacentVertices()
+              .map(vertex => vertex.id)
+              .join(',')}
           </td>
-        </tr>
-      {{/each}}
+        </tr>`
+        )
+        .join('')}
+      </tbody>
     </table>`;
-
-    const template = Handlebars.compile(source);
-
-    return template({ vertices });
   }
 
   renderAdjacencyMatrix(adjacencyMatrix: AdjacencyMatrix, vertices: Vertex[]): string {
@@ -35,28 +37,19 @@ export class TemplateRenderer {
       return '';
     }
 
-    const adjacencyTable = adjacencyMatrix.map((row, i) => [vertices[i].getId()].concat(row));
+    const adjacencyTable = adjacencyMatrix.map((row, i) => [vertices[i].id].concat(row));
 
-    const source = `<table class="graph-table">
+    return `<table class="graph-table">
       <tr>
         <th></th>
-        {{#each vertices}}
-          <th>{{ getId }}</th>
-        {{/each}}
-      </tr>
-
-      {{#each adjacencyTable}}
-        <tr>
-        {{#each this}}
-          <td>{{ this }}</td>
-        {{/each}}
-        </tr>
-      {{/each}}
+        ${vertices.map(vertex => `<th>${vertex.id}</th>`).join('')}
+       </tr>
+       ${adjacencyTable
+         .map(row => {
+           return `<tr>${row.map(column => `<td>${column}</td>`).join('')}</tr>`;
+         })
+         .join('')}
     </table>`;
-
-    const template = Handlebars.compile(source);
-
-    return template({ vertices, adjacencyTable });
   }
 
   renderIncidenceMatrix(incidenceMatrix: IncidenceMatrix): string {
@@ -64,42 +57,36 @@ export class TemplateRenderer {
       return '';
     }
 
-    const source = `<table class="graph-table">
+    return `<table class="graph-table">
       <tr>
         <th colspan='100%'>Incidence Matrix</th>
       </tr>
-      {{#each incidenceMatrix}}
-        <tr>
-          {{#each this}}
-            <td>{{ this }}</td>
-          {{/each}}
-        </tr>
-      {{/each}}
+      ${incidenceMatrix
+        .map(row => {
+          return `<tr>${row.map(column => `<td>${column}</td>`).join('')}</tr>`;
+        })
+        .join('')}
     </table>`;
-
-    const template = Handlebars.compile(source);
-
-    return template({ incidenceMatrix });
   }
 
   renderDegreesTable(vertices: Vertex[]): string {
-    const source = `<table class="graph-table">
+    return `<table class="graph-table">
       <tr>
         <th></th>
         <th>In degree</th>
         <th>Out degree</th>
       </tr>
-      {{#each vertices}}
-      <tr>
-        <td>{{ getId }}</td>
-        <td>{{ getInDegree }}</td>
-        <td>{{ getOutDegree }}</td>
-      </tr>
-      {{/each}}
+      ${vertices
+        .map(vertex => {
+          return `
+          <tr>
+            <td>${vertex.id}</td>
+            <td>${vertex.getInDegree()}</td>
+            <td>${vertex.getOutDegree()}</td>
+          </tr>
+        `;
+        })
+        .join('')}
     </table>`;
-
-    const template = Handlebars.compile(source);
-
-    return template({ vertices });
   }
 }

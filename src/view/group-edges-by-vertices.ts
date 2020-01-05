@@ -1,5 +1,4 @@
 import { UndirectedEdge } from '../model/undirected-edge';
-import { Vertex } from '../model/vertex';
 
 export function groupEdgesByVertices(edges: UndirectedEdge[]): UndirectedEdge[][] {
   const hashMap: { [key in string]: UndirectedEdge[] } = {};
@@ -7,7 +6,7 @@ export function groupEdgesByVertices(edges: UndirectedEdge[]): UndirectedEdge[][
   edges.forEach(edge => {
     const hash = edge
       .getVertices()
-      .map((vertex: Vertex) => vertex.getId())
+      .map(({ id }) => id)
       .sort()
       .join('');
 

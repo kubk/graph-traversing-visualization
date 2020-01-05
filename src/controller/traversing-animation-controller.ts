@@ -56,7 +56,7 @@ export class TraversingAnimationController extends EventEmitter<AnimationEvents>
       this.canvasRenderer.drawCircle(
         currentVertex.getPosition()!,
         this.graphCanvasController.getVertexRadius() + 10,
-        currentVertex.getId().toString(),
+        currentVertex.id.toString(),
         this.visitedVertexColor
       );
       setTimeout(() => this.animateVisited(visitedVertices), this.vertexVisitDelay);

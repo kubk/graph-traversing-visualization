@@ -20,12 +20,8 @@ module.exports = (env, { mode }) => {
         }
       ]
     },
-    // https://github.com/wycats/handlebars.js/issues/953
     resolve: {
       extensions: ['.js', '.ts'],
-      alias: {
-        handlebars: 'handlebars/dist/handlebars.js'
-      }
     },
     devServer: {
       contentBase: path.join(__dirname, 'public'),

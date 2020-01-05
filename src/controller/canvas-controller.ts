@@ -59,7 +59,7 @@ export class CanvasController {
       this.canvasRenderer.drawCircle(
         vertex.getPosition()!,
         this.vertexRadius,
-        vertex.getId().toString(),
+        vertex.id.toString(),
         color
       );
     });
@@ -151,7 +151,7 @@ export class CanvasController {
     this.canvasRenderer.drawCircle(
       vertex.getPosition()!,
       this.vertexRadius,
-      vertex.getId().toString()
+      vertex.id.toString()
     );
   }
 }
