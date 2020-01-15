@@ -5,6 +5,7 @@ import { Position } from '../model/position';
 import { groupEdgesByVertices } from '../view/group-edges-by-vertices';
 import { DirectedEdge } from '../model/directed-edge';
 import { UndirectedEdge } from '../model/undirected-edge';
+const debounce = require('lodash/debounce');
 
 export class CanvasController {
   private dragVertex: Vertex | null = null;
@@ -23,6 +24,7 @@ export class CanvasController {
     this.canvas.addEventListener('mousemove', this.onMousemoveListener.bind(this));
     this.canvas.addEventListener('mouseup', this.onMouseupListener.bind(this));
     this.canvas.addEventListener('mousedown', this.onMousedownListener.bind(this));
+    window.addEventListener('resize', debounce(this.onResizeListener.bind(this), 100));
     this.graph.on('vertexCreated', this.drawVertex.bind(this));
   }
 
@@ -78,6 +80,11 @@ export class CanvasController {
     } else if (vertex && ctrlKeyIsPressed(event)) {
       this.setVertexAsSelected(vertex);
     }
+  }
+
+  private onResizeListener(): void {
+    this.canvasRenderer.recalculateDimensions();
+    this.redraw();
   }
 
   private onContextMenuListener(event: MouseEvent): void {

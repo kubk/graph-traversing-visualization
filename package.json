@@ -19,7 +19,6 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@types/handlebars": "^4.1.0",
     "@types/jest": "^24.0.25",
     "bundlesize": "^0.18.0",
     "css-loader": "^3.4.0",
