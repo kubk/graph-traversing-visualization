@@ -1,6 +1,12 @@
 body {
   background-color: #ccc;
   font-family: Open Sans, 'sans-serif';
+  margin: 0;
+  padding: 0;
+}
+
+.canvas-wrapper {
+  overflow-x: auto;
 }
 
 .canvas {
@@ -15,7 +21,6 @@ body {
 .settings-selector,
 .canvas {
   display: block;
-  margin-bottom: 18px;
 }
 
 .graph-table {

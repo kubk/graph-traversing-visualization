@@ -6,20 +6,22 @@ import { createEdgeShiftGenerator } from './create-edge-shift-generator';
 
 export class CanvasRenderer {
   private context: CanvasRenderingContext2D;
-  private width: number;
-  private height: number;
   private fontSize = 13;
   private ratio = 0.5;
   private arrowLength = 20;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(private canvas: HTMLCanvasElement) {
     this.context = canvas.getContext('2d')!;
-    this.width = canvas.width;
-    this.height = canvas.height;
+    this.recalculateDimensions();
+  }
+
+  recalculateDimensions(): void {
+    this.canvas.height = window.innerHeight / 2;
+    this.canvas.width = window.innerWidth > this.canvas.width ? window.innerWidth : this.canvas.width;
   }
 
   clearCanvas(): void {
-    this.context.clearRect(0, 0, this.width, this.height);
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   drawUndirectedLine(
