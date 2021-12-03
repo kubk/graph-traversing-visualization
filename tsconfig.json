@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": ["es2015", "dom"],
+    "module": "commonjs",
+    "noImplicitReturns": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "allowJs": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "target": "es6"
+  },
+  "include": [
+    "src",
+    "test"
+  ]
+}
