@@ -1,10 +1,10 @@
 # kubk/graph-traversing-visualization [![Build Status](https://travis-ci.org/kubk/graph-traversing-visualization.svg?branch=gh-pages)](https://travis-ci.org/kubk/graph-traversing-visualization)
 
-Graph manipulation/traversing visualization using vanilla JavaScript + Canvas API.
+Graph manipulation/traversing visualization using TypeScript, Vanilla DOM API + Canvas.
 
 ## Features
 - Draggable vertices
-- Directed (one-way)/Undirected (two-way)/Parallel edges
+- Directed (one-way), undirected (two-way) and parallel edges
 - Dynamic building of [adjacency matrix](https://en.wikipedia.org/wiki/Adjacency_matrix), [incidence matrix](https://en.wikipedia.org/wiki/Incidence_matrix), [adjacency list](https://en.wikipedia.org/wiki/Adjacency_list)
 - Deleting vertices (with all connected edges)
 - Depth/Breadth-first search visualization
@@ -23,7 +23,9 @@ Check out demo in your browser:
 ## Example
 ![example](https://github.com/kubk/graph-traversing-visualization/blob/gh-pages/out.gif)
 
-## Testing
+## Development
 ```
+npm run start
 npm run test
+npm run build
 ```
