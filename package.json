@@ -3,18 +3,37 @@
   "version": "1.0.0",
   "description": "Graph manipulation/traversing visualization using vanilla JavaScript + Canvas API.",
   "scripts": {
-	  "test": "mocha"
+    "start": "webpack-dev-server --watch --hot --mode development",
+    "build": "webpack --mode production",
+    "bundlesize": "bundlesize",
+    "source-map-explorer": "webpack --mode development && npx source-map-explorer ./public/bundle.js",
+    "test": "jest",
+    "tdd": "jest --watchAll",
+    "lint": "npx eslint src/** test/**"
   },
+  "bundlesize": [
+    {
+      "path": "./public/bundle.js",
+      "maxSize": "100 kB"
+    }
+  ],
+  "dependencies": {},
   "devDependencies": {
-    "babel-core": "^6.25.0",
-    "babel-loader": "^7.1.1",
-    "babel-preset-es2015": "^6.24.1",
-    "chai": "^3.5.0",
-    "mocha": "^3.2.0",
-    "sinon": "^1.17.7",
-    "webpack": "^3.4.1"
-  },
-  "dependencies": {
-    "handlebars": "^4.0.10"
+    "@types/jest": "^24.0.25",
+    "bundlesize": "^0.18.0",
+    "css-loader": "^3.4.0",
+    "eslint": "^6.8.0",
+    "jest": "^24.9.0",
+    "node-sass": "^4.13.0",
+    "prettier": "^1.19.1",
+    "sass-loader": "^8.0.0",
+    "source-map-explorer": "^2.2.0",
+    "style-loader": "^1.1.2",
+    "ts-jest": "^24.2.0",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.4",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
   }
 }
