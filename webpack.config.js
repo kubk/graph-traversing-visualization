@@ -1,25 +1,46 @@
 const path = require('path');
+const webpack = require('webpack');
 
-module.exports = {
-    entry: './src/app.js',
+module.exports = (env, { mode }) => {
+  return {
+    entry: './src/index.ts',
     output: {
-        filename: './dist/bundle.js'
+      filename: './bundle.js',
+      path: path.join(__dirname, 'public')
     },
     module: {
-        loaders: [
-            {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['es2015']
-                }
-            }
-        ]
+      rules: [
+        {
+          test: /\.js$/,
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        },
+        {
+          test: /\.ts$/,
+          exclude: [/node_modules/],
+          use: 'ts-loader'
+        },
+        {
+          test: /\.scss$/,
+          use: ['style-loader', 'css-loader', 'sass-loader']
+        }
+      ]
     },
     // https://github.com/wycats/handlebars.js/issues/953
     resolve: {
-        alias: {
-            'handlebars': 'handlebars/dist/handlebars.js'
-        }
-    }
+      extensions: ['.js', '.ts'],
+      alias: {
+        handlebars: 'handlebars/dist/handlebars.js'
+      }
+    },
+    devServer: {
+      contentBase: path.join(__dirname, 'public'),
+      compress: true,
+      port: 9000
+    },
+    devtool: mode === 'production' ? undefined : 'source-map',
+    plugins: mode === 'production' ? [] : [new webpack.SourceMapDevToolPlugin({})]
+  };
 };
