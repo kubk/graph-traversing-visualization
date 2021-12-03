@@ -1,25 +1,33 @@
 const path = require('path');
 
-module.exports = {
-    entry: './src/app.js',
+module.exports = (env, { mode }) => {
+  return {
+    entry: './src/index.ts',
     output: {
-        filename: './dist/bundle.js'
+      filename: './bundle.js',
+      path: path.join(__dirname, 'public')
     },
     module: {
-        loaders: [
-            {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['es2015']
-                }
-            }
-        ]
-    },
-    // https://github.com/wycats/handlebars.js/issues/953
-    resolve: {
-        alias: {
-            'handlebars': 'handlebars/dist/handlebars.js'
+      rules: [
+        {
+          test: /\.ts$/,
+          exclude: [/node_modules/],
+          use: 'ts-loader'
+        },
+        {
+          test: /\.scss$/,
+          use: ['style-loader', 'css-loader', 'sass-loader']
         }
-    }
+      ]
+    },
+    resolve: {
+      extensions: ['.js', '.ts'],
+    },
+    devServer: {
+      contentBase: path.join(__dirname, 'public'),
+      compress: true,
+      port: 9000
+    },
+    devtool: mode === 'production' ? undefined : 'source-map'
+  };
 };
