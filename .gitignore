@@ -1,5 +1,7 @@
 .idea
+dist
 todo
 push-to-github.sh
 node_modules
 npm-debug.log
+public/bundle.*
